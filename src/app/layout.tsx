@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import { MusicPlayer } from "@/components/MusicPlayer";
+import { VisitAlert } from "@/components/VisitAlert";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -27,9 +30,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={poppins.variable}>
+    <html lang="en" className={poppins.variable} suppressHydrationWarning>
       <body className="min-h-screen antialiased">
-        {children}
+        <ThemeProvider>
+          {children}
+          <MusicPlayer />
+          <VisitAlert />
+        </ThemeProvider>
         <Analytics />
       </body>
     </html>

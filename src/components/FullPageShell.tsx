@@ -2,13 +2,13 @@
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { About } from "@/components/About";
+import { ChatBot } from "@/components/ChatBot";
 import { Contact } from "@/components/Contact";
 import { CursorGlow } from "@/components/CursorGlow";
 import { Footer } from "@/components/Footer";
 import { Hero } from "@/components/Hero";
 import { NavPill } from "@/components/NavPill";
 import { Projects } from "@/components/Projects";
-import { ScrollIndicator } from "@/components/ScrollIndicator";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { SectionFrame } from "@/components/SectionFrame";
 import { Skills } from "@/components/Skills";
@@ -63,7 +63,7 @@ export function FullPageShell() {
       <ScrollProgress />
       <CursorGlow />
       <NavPill />
-      <div className="relative h-dvh overflow-hidden bg-[#0b0f14]">
+      <div className="relative h-dvh overflow-hidden bg-background">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={section}
@@ -81,7 +81,7 @@ export function FullPageShell() {
           </motion.div>
         </AnimatePresence>
       </div>
-      {section === "hero" && !isTransitioning && <ScrollIndicator />}
+      <ChatBot />
     </>
   );
 }

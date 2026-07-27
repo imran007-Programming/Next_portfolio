@@ -1,12 +1,14 @@
 export const site = {
   name: "Imran",
-  profileImage: "/profile.png",
+  profileImage: "/myimage/Gemini_Generated_Image_txfuqxtxfuqxtxfu.png",
   role: "Full Stack Developer",
   tagline:
     "I design and build reliable web applications — from polished interfaces to scalable APIs.",
-  email: "hello@imran.dev",
-  github: "https://github.com",
-  linkedin: "https://linkedin.com",
+  email: "imranphero@gmail.com",
+  phone: "+8801647153126",
+  whatsapp: "https://wa.me/8801647153126",
+  github: "https://github.com/imran007-Programming",
+  linkedin: "https://www.linkedin.com/in/imran-hasan-399170171/",
   location: "Available for remote work",
   resumeUrl:
     "https://drive.google.com/file/d/1Vkcq1cIhrL3OlVXU-yzXB3FGPuWHsdF7/view?usp=drive_link",

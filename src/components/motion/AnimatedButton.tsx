@@ -25,7 +25,7 @@ export function AnimatedButton({
   const base =
     variant === "primary"
       ? "rounded-full bg-accent px-6 py-3 text-sm font-semibold text-[#0b0f14]"
-      : "rounded-full border border-white/15 px-6 py-3 text-sm font-medium text-white hover:border-white/30 hover:bg-white/5";
+      : "rounded-full border border-black/15 px-6 py-3 text-sm font-medium text-foreground/80 hover:border-black/30 hover:bg-black/5 dark:border-white/15 dark:text-white dark:hover:border-white/30 dark:hover:bg-white/5";
 
   const motionProps = reduceMotion
     ? {}

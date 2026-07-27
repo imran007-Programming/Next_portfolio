@@ -22,11 +22,11 @@ export function RotatingRole() {
   }, [reduceMotion]);
 
   if (reduceMotion) {
-    return <span className="text-zinc-400">— {roles[0]}</span>;
+    return <span className="text-muted">— {roles[0]}</span>;
   }
 
   return (
-    <span className="relative inline-block min-h-[1.2em] text-zinc-400">
+    <span className="relative inline-block min-h-[1.2em] text-muted">
       <span className="invisible" aria-hidden>
         — {roles.reduce((a, b) => (a.length > b.length ? a : b))}
       </span>

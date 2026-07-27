@@ -48,27 +48,27 @@ export function ResumeModal({ open, onClose }: ResumeModalProps) {
           />
 
           <motion.div
-            className="relative z-10 flex h-[min(90vh,820px)] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0b0f14] shadow-2xl"
+            className="relative z-10 flex h-[min(90vh,820px)] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-black/10 bg-surface shadow-2xl dark:border-white/10"
             initial={reduceMotion ? false : { opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
-              <h3 className="font-semibold text-white">Resume Preview</h3>
+            <div className="flex items-center justify-between border-b border-black/10 px-5 py-4 dark:border-white/10">
+              <h3 className="font-semibold text-foreground">Resume Preview</h3>
               <div className="flex items-center gap-3">
                 <a
                   href={site.resumeUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm font-medium text-accent hover:underline"
+                  className="cursor-pointer text-sm font-medium text-accent hover:underline"
                 >
                   Open in Drive
                 </a>
                 <button
                   type="button"
                   onClick={onClose}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-zinc-400 transition-colors hover:border-white/30 hover:text-white"
+                  className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-black/15 text-muted transition-colors hover:border-black/30 hover:text-foreground dark:border-white/15 dark:hover:border-white/30"
                   aria-label="Close"
                 >
                   ✕

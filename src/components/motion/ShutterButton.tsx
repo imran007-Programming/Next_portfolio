@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useTheme } from "next-themes";
 import type { ReactNode, MouseEvent } from "react";
 
 type Dir = "top" | "bottom" | "left" | "right";
@@ -45,24 +46,27 @@ export function ShutterButton({
 }: ShutterButtonProps) {
   const [dir, setDir] = useState<Dir>("bottom");
   const [hovered, setHovered] = useState(false);
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme !== "light";
 
   const base =
-    "group relative inline-flex items-center justify-center overflow-hidden rounded-full px-7 py-3.5 text-sm font-semibold";
+    "group relative inline-flex cursor-pointer items-center justify-center overflow-hidden rounded-full px-7 py-3.5 text-sm font-semibold transition-all duration-300 hover:scale-105 hover:shadow-[0_0_25px_rgba(99,102,241,0.4)] dark:hover:shadow-[0_0_25px_rgba(45,212,191,0.4)]";
 
   const variantClasses =
     variant === "primary"
       ? "border border-accent/50 text-accent"
-      : "border border-white/20 text-white";
+      : "border border-black/20 text-foreground/80 dark:border-white/20 dark:text-white";
 
-  const fillColor = variant === "primary" ? "bg-accent" : "bg-white";
+  const fillColor = variant === "primary" ? "bg-accent" : (isDark ? "bg-white" : "bg-foreground");
+  const hoverTextColor = variant === "primary" ? "#0b0f14" : (isDark ? "#0b0f14" : "white");
 
   const handleMouseEnter = (e: MouseEvent<HTMLElement>) => {
-    setDir(getEntryDir(e));
+    setDir("left");
     setHovered(true);
   };
 
   const handleMouseLeave = (e: MouseEvent<HTMLElement>) => {
-    setDir(getEntryDir(e));
+    setDir("right");
     setHovered(false);
   };
 
@@ -80,7 +84,7 @@ export function ShutterButton({
       />
       <span
         className="relative z-10 transition-colors duration-300"
-        style={{ color: hovered ? "#0b0f14" : undefined }}
+        style={{ color: hovered ? hoverTextColor : undefined }}
       >
         {children}
       </span>
