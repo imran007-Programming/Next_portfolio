@@ -1,6 +1,6 @@
 export const site = {
   name: "Imran",
-  profileImage: "/myimage/Gemini_Generated_Image_txfuqxtxfuqxtxfu.png",
+  profileImage: "/myimage/210872212.jpg",
   role: "Full Stack Developer",
   tagline:
     "I design and build reliable web applications — from polished interfaces to scalable APIs.",

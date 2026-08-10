@@ -21,18 +21,18 @@ function HamburgerIcon({ open }: { open: boolean }) {
   return (
     <div className="flex h-3.5 w-4.5 flex-col justify-between" aria-hidden>
       <motion.span
-        className="block h-[1.75px] w-full origin-center rounded-full bg-current"
+        className="block h-[1.75px] w-full origin-center rounded-lg bg-current"
         animate={open ? { rotate: 45, y: 6 } : { rotate: 0, y: 0 }}
         transition={{ duration: 0.3, ease }}
       />
       <motion.span
-        className="block h-[1.75px] w-full rounded-full bg-current"
+        className="block h-[1.75px] w-full rounded-lg bg-current"
         animate={open ? { opacity: 0, scaleX: 0 } : { opacity: 1, scaleX: 1 }}
         transition={{ duration: 0.2 }}
         style={{ originX: "50%" }}
       />
       <motion.span
-        className="block h-[1.75px] w-full origin-center rounded-full bg-current"
+        className="block h-[1.75px] w-full origin-center rounded-lg bg-current"
         animate={open ? { rotate: -45, y: -6 } : { rotate: 0, y: 0 }}
         transition={{ duration: 0.3, ease }}
       />
@@ -67,7 +67,7 @@ function NavItem({
       type="button"
       onClick={() => onSelect(target)}
       onMouseEnter={onEnter}
-      className={`relative cursor-pointer overflow-hidden rounded-full px-3 py-1.5 text-sm transition-colors ${
+      className={`relative cursor-pointer overflow-hidden rounded-lg px-3 py-1.5 text-sm transition-colors ${
         isActive ? "bg-black/10 text-foreground dark:bg-white/10" : "text-muted hover:text-foreground"
       }`}
     >
@@ -131,7 +131,7 @@ function ThemeToggle() {
       type="button"
       aria-label="Toggle theme"
       onClick={toggleTheme}
-      className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-white/10 text-muted transition-colors hover:text-foreground"
+      className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border border-white/10 text-muted transition-colors hover:text-foreground"
       whileTap={{ scale: 0.88 }}
     >
       {mounted && (
@@ -209,7 +209,7 @@ function MobileNavItem({
         ))}
       </span>
       {isActive && (
-        <motion.span layoutId="mob-dot" className="h-2 w-2 rounded-full bg-accent" />
+        <motion.span layoutId="mob-dot" className="h-2 w-2 rounded-lg bg-accent" />
       )}
     </motion.button>
   );
@@ -245,7 +245,7 @@ export function NavPill() {
           >
             {/* Accent glow */}
             <div className="pointer-events-none absolute inset-0" aria-hidden>
-              <div className="absolute left-1/2 top-1/3 h-100 w-100 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/10 blur-[80px]" />
+              <div className="absolute left-1/2 top-1/3 h-100 w-100 -translate-x-1/2 -translate-y-1/2 rounded-lg bg-accent/10 blur-[80px]" />
             </div>
 
             {/* Nav links */}
@@ -267,7 +267,7 @@ export function NavPill() {
 
               <motion.button
                 type="button"
-                className="mt-6 cursor-pointer rounded-full bg-accent px-10 py-3.5 text-base font-bold text-[#0b0f14] shadow-[0_0_40px_rgba(45,212,191,0.25)] transition-shadow hover:shadow-[0_0_48px_rgba(45,212,191,0.4)]"
+                className="mt-6 cursor-pointer rounded-lg bg-accent px-10 py-3.5 text-base font-bold text-[#0b0f14] shadow-[0_0_40px_rgba(45,212,191,0.25)] transition-shadow hover:shadow-[0_0_48px_rgba(45,212,191,0.4)]"
                 initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 20 }}
@@ -298,7 +298,7 @@ export function NavPill() {
           <motion.nav
             layout
             aria-label="Main navigation"
-            className="flex items-center gap-1 rounded-full border border-black/10 bg-white/85 px-3 py-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.12)] backdrop-blur-xl dark:border-white/10 dark:bg-[#0b0f14]/85 dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] sm:px-4 sm:py-2"
+            className="flex items-center gap-1 rounded-lg border border-black/10 bg-white/85 px-3 py-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.12)] backdrop-blur-xl dark:border-white/10 dark:bg-[#0b0f14]/85 dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] sm:px-4 sm:py-2"
             initial={false}
             animate={{ borderColor: "rgba(45, 212, 191, 0.2)" }}
           >
@@ -331,7 +331,7 @@ export function NavPill() {
             {/* Desktop: Hire me */}
             <motion.button
               type="button"
-              className="ml-1 hidden shrink-0 cursor-pointer rounded-full bg-accent px-4 py-1.5 text-sm font-medium text-[#0b0f14] md:inline-flex"
+              className="ml-1 hidden shrink-0 cursor-pointer rounded-lg bg-accent px-4 py-1.5 text-sm font-medium text-[#0b0f14] md:inline-flex"
               whileHover={reduceMotion ? undefined : { scale: 1.05 }}
               whileTap={reduceMotion ? undefined : { scale: 0.97 }}
               onClick={() => goTo("contact")}
@@ -344,7 +344,7 @@ export function NavPill() {
               type="button"
               aria-label="Toggle menu"
               aria-expanded={menuOpen}
-              className="ml-0.5 flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full border border-black/10 text-muted dark:border-white/10 md:hidden"
+              className="ml-0.5 flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-black/10 text-muted dark:border-white/10 md:hidden"
               onClick={() => setMenuOpen((v) => !v)}
               whileTap={reduceMotion ? undefined : { scale: 0.92 }}
             >

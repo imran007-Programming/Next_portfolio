@@ -4,9 +4,23 @@ import Link from "next/link";
 import { projects } from "@/data/projects";
 import { GalleryGrid } from "./GalleryGrid";
 import { HeroScroll } from "./HeroScroll";
+import { LiveButton, NextProjectCard } from "./ProjectInteractive";
 
 export function generateStaticParams() {
   return projects.map((p) => ({ slug: p.slug }));
+}
+
+const TECH_COLORS: Record<string, string> = {
+  "React": "#38bdf8", "Next.js": "#a3a3a3", "TypeScript": "#60a5fa",
+  "JavaScript": "#fbbf24", "Tailwind CSS": "#2dd4bf", "Vite": "#a78bfa",
+  "Framer Motion": "#f472b6", "Vercel": "#94a3b8", "CSS": "#818cf8",
+  "Audio API": "#34d399", "Node.js": "#86efac", "Express": "#c9d1d9",
+  "Prisma": "#a5b4fc", "PostgreSQL": "#93c5fd", "MongoDB": "#6ee7b7",
+  "Mongoose": "#fca5a5",
+};
+const FALLBACK = ["#fb923c", "#e879f9", "#4ade80", "#f87171", "#facc15"];
+function techColor(name: string, idx: number) {
+  return TECH_COLORS[name] ?? FALLBACK[idx % FALLBACK.length];
 }
 
 export default async function ProjectPage({
@@ -21,118 +35,167 @@ export default async function ProjectPage({
   const project = projects[index];
   const next = projects[(index + 1) % projects.length];
   const num = String(index + 1).padStart(2, "0");
-  const heroImage = project.image;
+  const nextNum = String((index + 2) > projects.length ? 1 : index + 2).padStart(2, "0");
 
   return (
-    <div className="h-screen overflow-y-auto bg-background text-foreground">
+    <div className="min-h-screen selection:bg-purple-500/30 selection:text-white" style={{ background: "#080808", color: "#f0f0f0" }}>
 
-      {/* Top bar */}
-      <header className="sticky top-0 z-50 flex items-center justify-between border-b border-black/5 bg-background/90 px-6 py-4 backdrop-blur-xl dark:border-white/5">
+      {/* ── Ambient purple background glow ── */}
+      <div
+        className="pointer-events-none fixed top-0 left-1/2 -translate-x-1/2 z-0 h-[500px] w-full max-w-7xl opacity-20 blur-3xl"
+        style={{
+          background: "radial-gradient(circle at top, rgba(139,92,246,0.5) 0%, transparent 70%)",
+        }}
+        aria-hidden
+      />
+
+      {/* ── Sticky Top Bar ── */}
+      <header
+        className="sticky top-0 z-50 flex items-center justify-between px-6 py-4 md:px-10"
+        style={{
+          background: "rgba(8,8,8,0.92)",
+          borderBottom: "1px solid rgba(255,255,255,0.08)",
+          backdropFilter: "blur(24px)",
+          WebkitBackdropFilter: "blur(24px)",
+        }}
+      >
         <Link
           href="/#projects"
-          className="flex cursor-pointer items-center gap-2 text-sm font-medium text-muted transition-colors hover:text-foreground"
+          className="group flex items-center gap-2 text-sm font-semibold transition-colors duration-200 hover:text-white"
+          style={{ color: "#a3a3a3" }}
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+          <svg
+            width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden
+            className="transition-transform duration-200 group-hover:-translate-x-1"
+          >
             <path d="M19 12H5M5 12l7-7M5 12l7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          Back to work
+          Back to Work
         </Link>
-        {/* Prev / Next nav */}
-        <div className="flex items-center gap-1 rounded-full border border-black/10 bg-black/4 p-1 dark:border-white/10 dark:bg-white/4">
+
+        {/* Counter & Prev/Next */}
+        <div
+          className="flex items-center gap-1.5 rounded-full p-1.5"
+          style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}
+        >
           <Link
             href={`/projects/${projects[(index - 1 + projects.length) % projects.length].slug}`}
             aria-label="Previous project"
-            className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-muted transition-colors hover:bg-black/10 hover:text-foreground dark:hover:bg-white/10"
+            className="flex h-8 w-8 items-center justify-center rounded-full transition-colors duration-200 hover:bg-white/10"
+            style={{ color: "#a3a3a3" }}
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden>
               <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </Link>
-          <span className="px-1 text-xs font-semibold tabular-nums text-accent/60">
+          <span className="px-2 font-mono text-xs font-bold tabular-nums" style={{ color: "#8b5cf6" }}>
             {num} / {String(projects.length).padStart(2, "0")}
           </span>
           <Link
             href={`/projects/${projects[(index + 1) % projects.length].slug}`}
             aria-label="Next project"
-            className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-muted transition-colors hover:bg-black/10 hover:text-foreground dark:hover:bg-white/10"
+            className="flex h-8 w-8 items-center justify-center rounded-full transition-colors duration-200 hover:bg-white/10"
+            style={{ color: "#a3a3a3" }}
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden>
               <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </Link>
         </div>
       </header>
 
-      <main className="mx-auto max-w-5xl px-6 pb-24 pt-12">
+      <main className="relative z-10 mx-auto max-w-5xl px-6 pb-28 pt-10 md:px-10">
 
-        {/* Hero image */}
-        {project.scrollPreview ? (
-          <HeroScroll src={heroImage} alt={project.title} />
-        ) : (
-          <div className="relative overflow-hidden rounded-2xl border border-black/8 bg-surface dark:border-white/8">
+        {/* ── Project Header Title ── */}
+        <div className="mb-10">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="font-mono text-sm font-bold tabular-nums" style={{ color: "#8b5cf6" }}>
+              Case Study #{num}
+            </span>
+            {project.details && (
+              <>
+                <span className="h-3 w-px" style={{ background: "rgba(255,255,255,0.15)" }} />
+                <span
+                  className="rounded-full px-3 py-0.5 text-xs font-semibold"
+                  style={{ background: "rgba(139,92,246,0.15)", border: "1px solid rgba(139,92,246,0.3)", color: "#c084fc" }}
+                >
+                  {project.details.role}
+                </span>
+                <span
+                  className="rounded-full px-3 py-0.5 text-xs font-semibold"
+                  style={{ border: "1px solid rgba(255,255,255,0.1)", color: "#a3a3a3" }}
+                >
+                  {project.details.year}
+                </span>
+              </>
+            )}
+          </div>
+
+          <h1 className="mt-4 text-[clamp(2.5rem,6vw,4.5rem)] font-extrabold tracking-tight leading-[1.05]" style={{ color: "#f5f5f5" }}>
+            {project.title}
+          </h1>
+
+          <p className="mt-4 max-w-3xl text-base leading-relaxed md:text-lg" style={{ color: "#a3a3a3" }}>
+            {project.description}
+          </p>
+        </div>
+
+        {/* ── Hero Image / Preview Box ── */}
+        <div
+          className="overflow-hidden rounded-2xl shadow-2xl transition-all duration-500 hover:border-purple-500/30"
+          style={{ border: "1px solid rgba(255,255,255,0.1)", background: "rgba(17,17,17,0.7)" }}
+        >
+          {project.scrollPreview ? (
+            <HeroScroll src={project.image} alt={project.title} />
+          ) : (
             <div className="relative h-[55vh] w-full overflow-hidden">
               <Image
-                src={heroImage}
+                src={project.image}
                 alt={project.title}
                 fill
                 priority
-                className="object-cover object-top transition-transform duration-700 hover:scale-105"
+                className="object-cover object-top transition-transform duration-700 hover:scale-102"
                 sizes="100vw"
               />
-              <div className="absolute inset-0 bg-linear-to-t from-surface/60 via-transparent to-transparent" />
+              <div
+                className="absolute inset-0"
+                style={{ background: "linear-gradient(to top, rgba(8,8,8,0.7) 0%, transparent 60%)" }}
+              />
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
-        {/* Project info */}
-        <div className="mt-10 grid gap-10 md:grid-cols-[1fr_auto]">
+        {/* ── Actions & Tech Stack Row ── */}
+        <div className="mt-10 grid gap-8 md:grid-cols-[1fr_auto] md:items-center">
           <div>
-            <div className="flex items-center gap-3">
-              <p className="text-sm font-bold tabular-nums text-accent/60">{num}</p>
-              {project.details && (
-                <>
-                  <span className="h-3 w-px bg-black/15 dark:bg-white/15" />
-                  <span className="rounded-full border border-black/10 px-2.5 py-0.5 text-xs font-medium text-muted dark:border-white/10">
-                    {project.details.role}
+            <p className="text-xs font-mono font-bold uppercase tracking-widest" style={{ color: "rgba(139,92,246,0.8)" }}>
+              Tech Stack &amp; Tools
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {project.tech.map((t, ti) => {
+                const c = techColor(t, ti);
+                return (
+                  <span
+                    key={t}
+                    className="rounded-full px-3.5 py-1 text-xs font-bold transition-transform duration-200 hover:scale-105"
+                    style={{ background: `${c}18`, border: `1px solid ${c}35`, color: c }}
+                  >
+                    {t}
                   </span>
-                  <span className="rounded-full border border-black/10 px-2.5 py-0.5 text-xs font-medium text-muted dark:border-white/10">
-                    {project.details.year}
-                  </span>
-                </>
-              )}
-            </div>
-            <h1 className="mt-2 text-3xl font-bold text-foreground md:text-4xl">{project.title}</h1>
-            <p className="mt-4 text-base leading-relaxed text-muted">{project.description}</p>
-
-            {/* Tech */}
-            <div className="mt-6 flex flex-wrap gap-2">
-              {project.tech.map((t) => (
-                <span
-                  key={t}
-                  className="rounded-full border border-accent/20 bg-accent/8 px-3 py-1 text-xs font-medium text-accent/80"
-                >
-                  {t}
-                </span>
-              ))}
+                );
+              })}
             </div>
           </div>
 
-          {/* CTAs */}
-          <div className="flex flex-row items-start gap-3 md:flex-col md:items-end">
-            <a
-              href={project.liveUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="cursor-pointer rounded-full bg-accent px-6 py-2.5 text-sm font-bold text-[#0b0f14] transition-shadow hover:shadow-[0_0_24px_rgba(45,212,191,0.4)]"
-            >
-              Live site ↗
-            </a>
+          <div className="flex flex-wrap items-center gap-3">
+            <LiveButton href={project.liveUrl} />
             {project.repoUrl && (
               <a
                 href={project.repoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 cursor-pointer rounded-full border border-black/15 px-6 py-2.5 text-sm font-medium text-muted transition-colors hover:border-black/30 hover:text-foreground dark:border-white/15 dark:hover:border-white/30"
+                className="flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all duration-300 hover:border-white/30 hover:text-white"
+                style={{ border: "1px solid rgba(255,255,255,0.12)", color: "#a3a3a3" }}
               >
                 <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current" aria-hidden>
                   <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.335-1.755-1.335-1.755-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23A11.52 11.52 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.29-1.552 3.297-1.23 3.297-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12z" />
@@ -143,72 +206,86 @@ export default async function ProjectPage({
           </div>
         </div>
 
-        {/* Key highlights */}
+        {/* ── Key Metrics Cards ── */}
+        {project.metrics && project.metrics.length > 0 && (
+          <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-3">
+            {project.metrics.map((m) => (
+              <div
+                key={m.label}
+                className="group rounded-2xl p-6 text-center transition-all duration-300 hover:border-purple-500/40 hover:-translate-y-1"
+                style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.08)" }}
+              >
+                <p className="text-3xl font-extrabold tabular-nums transition-colors group-hover:text-accent" style={{ color: "#8b5cf6" }}>
+                  {m.value}
+                </p>
+                <p className="mt-1.5 text-xs font-semibold uppercase tracking-wider" style={{ color: "#a3a3a3" }}>
+                  {m.label}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* ── Key Features Checklist ── */}
         {project.details?.highlights && (
-          <div className="mt-12">
-            <div className="mb-5 flex items-center gap-3">
-              <span className="h-px w-8 bg-accent/40" />
-              <p className="text-xs font-bold uppercase tracking-widest text-accent/70">Key Features</p>
-              <span className="h-px flex-1 bg-black/5 dark:bg-white/5" />
+          <div className="mt-16">
+            <div className="mb-6 flex items-center gap-3">
+              <span className="h-px w-8" style={{ background: "rgba(139,92,246,0.5)" }} />
+              <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "#c084fc" }}>
+                Key Features &amp; Engineering Highlights
+              </p>
+              <span className="h-px flex-1" style={{ background: "rgba(255,255,255,0.08)" }} />
             </div>
-            <div className="grid gap-3 sm:grid-cols-2">
+
+            <div className="grid gap-4 sm:grid-cols-2">
               {project.details.highlights.map((h, i) => (
                 <div
                   key={i}
-                  className="flex items-start gap-3 rounded-xl border border-black/6 bg-surface p-4 dark:border-white/6"
+                  className="group flex items-start gap-3.5 rounded-2xl p-5 transition-all duration-300 hover:border-purple-500/30"
+                  style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.08)" }}
                 >
-                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-accent/15">
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden>
-                      <path d="M20 6L9 17l-5-5" stroke="#2dd4bf" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                  <span
+                    className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full transition-transform group-hover:scale-110"
+                    style={{ background: "rgba(139,92,246,0.2)", border: "1px solid rgba(139,92,246,0.4)" }}
+                  >
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden>
+                      <path d="M20 6L9 17l-5-5" stroke="#c084fc" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </span>
-                  <p className="text-sm leading-relaxed text-muted">{h}</p>
+                  <p className="text-sm leading-relaxed" style={{ color: "#d4d4d4" }}>{h}</p>
                 </div>
               ))}
             </div>
           </div>
         )}
 
-        {/* Gallery */}
+        {/* ── Gallery Screenshots ── */}
         {project.gallery && project.gallery.length > 0 && (
-          <div className="mt-16">
+          <div className="mt-20">
             <div className="mb-6 flex items-center gap-3">
-              <span className="h-px w-8 bg-accent/40" />
-              <p className="text-xs font-bold uppercase tracking-widest text-accent/70">Screenshots</p>
-              <span className="h-px flex-1 bg-black/5 dark:bg-white/5" />
-              <span className="text-xs text-muted/60">{project.gallery.length} images</span>
+              <span className="h-px w-8" style={{ background: "rgba(139,92,246,0.5)" }} />
+              <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "#c084fc" }}>
+                Project Screenshots &amp; Gallery
+              </p>
+              <span className="h-px flex-1" style={{ background: "rgba(255,255,255,0.08)" }} />
+              <span className="text-xs font-mono" style={{ color: "#a3a3a3" }}>
+                {project.gallery.length} Images
+              </span>
             </div>
             <GalleryGrid images={project.gallery} title={project.title} />
           </div>
         )}
 
-        {/* Divider */}
-        <div className="mt-16 h-px w-full bg-linear-to-r from-transparent via-black/10 to-transparent dark:via-white/10" />
+        {/* ── Bottom Section Divider ── */}
+        <div className="mt-20 h-px w-full" style={{ background: "rgba(255,255,255,0.08)" }} />
 
-        {/* Next project */}
-        <div className="mt-10">
-          <p className="text-xs font-semibold uppercase tracking-widest text-muted/60">Next project</p>
-          <Link
+        {/* ── Next Project Card ── */}
+        <div className="mt-12">
+          <NextProjectCard
             href={`/projects/${next.slug}`}
-            className="group mt-3 flex cursor-pointer items-center justify-between rounded-2xl border border-black/6 bg-surface p-5 transition-colors hover:border-accent/30 dark:border-white/6"
-          >
-            <div>
-              <p className="text-xs tabular-nums text-accent/50">
-                {String((index + 2) % projects.length === 0 ? projects.length : (index + 2)).padStart(2, "0")}
-              </p>
-              <p className="mt-0.5 text-lg font-bold text-foreground">{next.title}</p>
-            </div>
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              aria-hidden
-              className="text-muted transition-all duration-300 group-hover:translate-x-1 group-hover:text-accent"
-            >
-              <path d="M5 12h14M14 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </Link>
+            num={nextNum}
+            title={next.title}
+          />
         </div>
 
       </main>

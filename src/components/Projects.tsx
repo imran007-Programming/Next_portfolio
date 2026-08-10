@@ -1,18 +1,13 @@
 "use client";
 
-import Image from "next/image";
+import { useState, useRef } from "react";
 import Link from "next/link";
-import { useRef, useCallback } from "react";
-import {
-  motion, useReducedMotion, useAnimation,
-  useMotionValue, useSpring, useTransform, useMotionTemplate,
-} from "framer-motion";
-import { FadeIn } from "@/components/motion/FadeIn";
-import { SplitHeading } from "@/components/motion/SplitHeading";
+import { motion, useAnimation, useReducedMotion } from "framer-motion";
 import { projects } from "@/data/projects";
 import type { Project } from "@/data/projects";
+import { SectionHeading } from "@/components/SectionHeading";
+import { Framer3DWordFlip, FramerBlurWordReveal } from "@/components/TextReveal";
 
-/* ── Tech colour map ─────────────────────────────────────────────── */
 const TECH_COLORS: Record<string, string> = {
   "React": "#38bdf8", "Next.js": "#a3a3a3", "TypeScript": "#60a5fa",
   "JavaScript": "#fbbf24", "Tailwind CSS": "#2dd4bf", "Vite": "#a78bfa",
@@ -26,239 +21,265 @@ function techColor(name: string, idx: number) {
   return TECH_COLORS[name] ?? FALLBACK[idx % FALLBACK.length];
 }
 
-/* ── Single project card ─────────────────────────────────────────── */
+/* ── Project Card — Hovering overlays full site screenshot on top & auto-scrolls ── */
 function ProjectCard({ project, index }: { project: Project; index: number }) {
-  const num          = String(index + 1).padStart(2, "0");
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
+  const controls = useAnimation();
   const reduceMotion = useReducedMotion();
+  const [isHovered, setIsHovered] = useState(false);
 
-  /* 3-D tilt -------------------------------------------------------- */
-  const mx = useMotionValue(0);
-  const my = useMotionValue(0);
-  const sx = useSpring(mx, { stiffness: 150, damping: 20 });
-  const sy = useSpring(my, { stiffness: 150, damping: 20 });
-  const rotateX = useTransform(sy, [-0.5, 0.5], [8, -8]);
-  const rotateY = useTransform(sx, [-0.5, 0.5], [-8, 8]);
-
-  /* Glare ----------------------------------------------------------- */
-  const gx    = useTransform(sx, [-0.5, 0.5], [0, 100]);
-  const gy    = useTransform(sy, [-0.5, 0.5], [0, 100]);
-  const glare = useMotionTemplate`radial-gradient(380px at ${gx}% ${gy}%, rgba(255,255,255,0.06), transparent 70%)`;
-
-  /* Scroll preview -------------------------------------------------- */
-  const wrapRef    = useRef<HTMLDivElement>(null);
-  const imgRef     = useRef<HTMLImageElement>(null);
-  const scrollAnim = useAnimation();
-
-  const startScroll = useCallback(() => {
+  const handleMouseEnter = () => {
+    setIsHovered(true);
     if (reduceMotion) return;
-    const wrap = wrapRef.current;
-    const img  = imgRef.current;
-    if (!wrap || !img) return;
-    const dist = img.offsetHeight - wrap.clientHeight;
-    if (dist <= 0) return;
-    scrollAnim.start({ y: -dist, transition: { duration: 7, ease: [0.25, 0.46, 0.45, 0.94] } });
-  }, [scrollAnim, reduceMotion]);
 
-  const stopScroll = useCallback(() => {
-    scrollAnim.stop();
-    scrollAnim.start({ y: 0, transition: { duration: 0.8, ease: "easeOut" } });
-  }, [scrollAnim]);
+    // Small delay for smooth fade-in before scrolling starts
+    setTimeout(() => {
+      const wrap = wrapRef.current;
+      const img = imgRef.current;
+      if (!wrap || !img) return;
+      const dist = img.offsetHeight - wrap.clientHeight;
+      if (dist <= 0) return;
+
+      controls.start({
+        y: -dist,
+        transition: { duration: Math.max(4, dist / 90), ease: [0.25, 0.46, 0.45, 0.94] },
+      });
+    }, 200);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    controls.stop();
+    controls.set({ y: 0 });
+  };
 
   return (
-    <motion.div
-      style={{ perspective: "1200px" }}
-      initial={{ opacity: 0, y: 40 }}
+    <motion.article
+      className="group relative overflow-hidden rounded-2xl border p-5 md:p-7 transition-all duration-500 hover:border-accent/50"
+      style={{
+        borderColor: "var(--border)",
+        background: "var(--surface)",
+      }}
+      initial={reduceMotion ? false : { opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.6, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.5, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
-      <motion.article
-        style={{
-          rotateX: reduceMotion ? 0 : rotateX,
-          rotateY: reduceMotion ? 0 : rotateY,
-          transformStyle: "preserve-3d",
-        }}
-        className="relative overflow-hidden rounded-2xl border border-black/8 bg-white dark:border-white/8 dark:bg-[#0d1117]"
-        onMouseMove={(e) => {
-          if (reduceMotion) return;
-          const r = e.currentTarget.getBoundingClientRect();
-          mx.set((e.clientX - r.left) / r.width - 0.5);
-          my.set((e.clientY - r.top) / r.height - 0.5);
-        }}
-        onMouseEnter={() => { if (project.scrollPreview) startScroll(); }}
-        onMouseLeave={() => {
-          mx.set(0);
-          my.set(0);
-          if (project.scrollPreview) stopScroll();
-        }}
-      >
-        <div className="flex flex-col md:flex-row md:h-96">
-
-          {/* ── Image ── */}
-          {project.scrollPreview ? (
-            <div
-              ref={wrapRef}
-              className="relative h-56 shrink-0 overflow-hidden md:w-[42%] md:h-full"
+      {/* ── CARD CONTENT (Default view) ── */}
+      <div className="relative z-10 flex flex-col justify-between min-h-[170px]">
+        <div>
+          {/* Top row: Index & Badge */}
+          <div className="mb-2 flex items-center justify-between">
+            <span
+              className="font-mono text-sm font-bold tabular-nums"
+              style={{ color: "var(--accent)" }}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <motion.img
-                ref={imgRef}
-                animate={scrollAnim}
-                src={project.image}
-                alt={project.title}
-                className="w-full h-auto block"
-                style={{ y: 0 }}
-              />
-              <div className="pointer-events-none absolute inset-0 hidden bg-linear-to-r from-transparent to-white/50 dark:to-[#0d1117]/50 md:block" />
-              <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-transparent to-white/70 dark:to-[#0d1117]/70 md:hidden" />
-            </div>
-          ) : (
-            <div className="relative h-56 shrink-0 overflow-hidden md:w-[42%] md:h-full">
-              <Image
-                src={project.image}
-                alt={project.title}
-                fill
-                className="object-cover object-top"
-                sizes="(max-width: 768px) 100vw, 42vw"
-              />
-              <div className="pointer-events-none absolute inset-0 hidden bg-linear-to-r from-transparent to-white/50 dark:to-[#0d1117]/50 md:block" />
-              <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-transparent to-white/70 dark:to-[#0d1117]/70 md:hidden" />
+              {String(index + 1).padStart(2, "0")}
+            </span>
+            {index === 0 && (
+              <span
+                className="rounded-lg px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest"
+                style={{
+                  background: "rgba(139,92,246,0.2)",
+                  border: "1px solid rgba(139,92,246,0.4)",
+                  color: "var(--accent)",
+                }}
+              >
+                Featured
+              </span>
+            )}
+          </div>
+
+          {/* Title */}
+          <h3
+            className="text-xl font-bold tracking-tight transition-colors duration-200 group-hover:text-accent md:text-2xl lg:text-3xl"
+            style={{ color: "var(--foreground)" }}
+          >
+            {project.title}
+          </h3>
+
+          {/* Description */}
+          <p
+            className="mt-2 max-w-3xl text-sm leading-relaxed line-clamp-2"
+            style={{ color: "var(--muted)" }}
+          >
+            {project.description}
+          </p>
+
+          {/* Metrics */}
+          {project.metrics && project.metrics.length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {project.metrics.map((m) => (
+                <span
+                  key={m.label}
+                  className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-0.5 text-xs font-semibold"
+                  style={{
+                    background: "rgba(139,92,246,0.12)",
+                    border: "1px solid rgba(139,92,246,0.25)",
+                  }}
+                >
+                  <span style={{ color: "var(--accent)" }}>{m.value}</span>
+                  <span style={{ color: "var(--muted)", fontSize: "10px" }}>{m.label}</span>
+                </span>
+              ))}
             </div>
           )}
 
-          {/* ── Content ── */}
-          <div className="flex flex-col justify-between p-6 md:p-8 md:w-[58%]">
-            <div>
-              {/* Index + badge */}
-              <div className="mb-3 flex items-center justify-between">
-                <span className="text-[10px] font-bold tabular-nums text-foreground/20">{num}</span>
-                {index === 0 && (
-                  <span className="rounded-full border border-accent/40 bg-accent/20 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-accent backdrop-blur-sm">
-                    Featured
-                  </span>
-                )}
-              </div>
-
-              <h3 className="text-xl font-bold leading-tight text-foreground md:text-2xl">
-                {project.title}
-              </h3>
-
-              <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted">
-                {project.description}
-              </p>
-
-              {/* Metrics */}
-              {project.metrics && project.metrics.length > 0 && (
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {project.metrics.map((metric) => (
-                    <span
-                      key={metric.label}
-                      className="inline-flex items-center gap-1.5 rounded-lg border border-accent/20 bg-accent/8 px-2.5 py-1"
-                    >
-                      <span className="text-xs font-bold tabular-nums text-accent">
-                        {metric.value}
-                      </span>
-                      <span className="text-[10px] text-muted">
-                        {metric.label}
-                      </span>
-                    </span>
-                  ))}
-                </div>
-              )}
-
-              {/* Tech pills */}
-              <div className="mt-4 flex flex-wrap gap-1.5">
-                {project.tech.map((t, i) => {
-                  const c = techColor(t, i);
-                  return (
-                    <span
-                      key={t}
-                      style={{ background: `${c}22`, borderColor: `${c}45`, color: c }}
-                      className="rounded-full border px-2.5 py-0.5 text-[10px] font-semibold backdrop-blur-sm"
-                    >
-                      {t}
-                    </span>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Actions */}
-            <div className="mt-6 flex flex-wrap items-center gap-3">
-              <a
-                href={project.liveUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="rounded-full bg-accent px-5 py-2 text-xs font-bold text-white transition-shadow hover:shadow-[0_0_20px_rgba(99,102,241,0.4)] dark:text-[#0b0f14] dark:hover:shadow-[0_0_20px_rgba(45,212,191,0.5)]"
-              >
-                Live site ↗
-              </a>
-              {project.repoUrl && (
-                <a
-                  href={project.repoUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 rounded-full border border-foreground/20 px-5 py-2 text-xs font-medium text-foreground/80 backdrop-blur-sm transition-colors hover:border-foreground/45 hover:text-foreground"
+          {/* Tech pills */}
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {project.tech.map((t, ti) => {
+              const c = techColor(t, ti);
+              return (
+                <span
+                  key={t}
+                  className="rounded-lg px-2.5 py-0.5 text-[10px] font-semibold"
+                  style={{
+                    background: `${c}18`,
+                    border: `1px solid ${c}35`,
+                    color: c,
+                  }}
                 >
-                  <svg viewBox="0 0 24 24" className="h-3 w-3 fill-current" aria-hidden>
-                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.335-1.755-1.335-1.755-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23A11.52 11.52 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.29-1.552 3.297-1.23 3.297-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12z" />
-                  </svg>
-                  GitHub
-                </a>
-              )}
-              <Link
-                href={`/projects/${project.slug}`}
-                className="ml-auto text-[11px] font-semibold text-accent/50 transition-colors hover:text-accent"
-              >
-                View details →
-              </Link>
-            </div>
+                  {t}
+                </span>
+              );
+            })}
           </div>
         </div>
 
-        {/* Glare overlay */}
-        <motion.div
-          className="pointer-events-none absolute inset-0"
-          style={{ background: glare }}
-          aria-hidden
+        {/* Bottom row: Actions */}
+        <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <a
+              href={project.liveUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-lg px-5 py-2 text-xs font-bold transition-all duration-300 hover:scale-105"
+              style={{ background: "var(--foreground)", color: "var(--background)" }}
+            >
+              Live site ↗
+            </a>
+            {project.repoUrl && (
+              <a
+                href={project.repoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-lg border px-5 py-2 text-xs font-medium transition-all duration-300 hover:border-white/20 hover:text-white"
+                style={{ borderColor: "var(--border)", color: "var(--muted)" }}
+              >
+                GitHub
+              </a>
+            )}
+          </div>
+
+          <motion.div
+            whileHover={reduceMotion ? undefined : { scale: 1.05, y: -1 }}
+            whileTap={reduceMotion ? undefined : { scale: 0.95 }}
+          >
+            <Link
+              href={`/projects/${project.slug}`}
+              className="group/link flex items-center gap-1.5 rounded-lg border px-5 py-2 text-xs font-semibold transition-all duration-300 hover:border-accent/40 hover:text-accent"
+              style={{ borderColor: "var(--border)", color: "var(--muted)", background: "rgba(255,255,255,0.02)" }}
+            >
+              Details
+              <svg
+                width="11" height="11" viewBox="0 0 16 16" fill="none"
+                className="transition-transform duration-200 group-hover/link:translate-x-1"
+              >
+                <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </Link>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* ── FULL CARD IMAGE OVERLAY — Covers the text completely on hover & auto-scrolls ── */}
+      <div
+        ref={wrapRef}
+        className={`absolute inset-0 z-20 overflow-hidden bg-[#080808] transition-all duration-500 ease-out ${
+          isHovered
+            ? "opacity-100 scale-100 pointer-events-auto"
+            : "opacity-0 scale-98 pointer-events-none"
+        }`}
+      >
+        {/* Full site screenshot */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <motion.img
+          ref={imgRef}
+          animate={controls}
+          src={project.image}
+          alt={project.title}
+          className="w-full h-auto block"
+          style={{ y: 0 }}
         />
-      </motion.article>
-    </motion.div>
+
+        {/* Top header overlay bar */}
+        <div className="absolute inset-x-0 top-0 flex items-center justify-between p-4 bg-gradient-to-b from-black/80 via-black/40 to-transparent">
+          <span className="text-xs font-bold text-white px-3 py-1 rounded-lg bg-black/60 backdrop-blur-md border border-white/10">
+            {project.title} — Full Preview
+          </span>
+          <span className="text-[10px] font-medium text-accent flex items-center gap-1.5 px-3 py-1 rounded-lg bg-black/60 backdrop-blur-md border border-white/10">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" className="animate-bounce">
+              <path d="M12 5v14M5 12l7 7 7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            Auto scrolling
+          </span>
+        </div>
+
+        {/* Bottom CTA overlay bar */}
+        <div className="absolute inset-x-0 bottom-0 flex items-center justify-between p-4 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
+          <motion.a
+            href={project.liveUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative overflow-hidden inline-flex items-center gap-1.5 rounded-lg px-5 py-2 text-xs font-bold bg-accent text-[#080808] shadow-lg"
+            whileHover={reduceMotion ? undefined : { scale: 1.06, y: -1, boxShadow: "0 0 20px rgba(139,92,246,0.6)" }}
+            whileTap={reduceMotion ? undefined : { scale: 0.95 }}
+          >
+            <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-[-20deg] transition-transform duration-700 ease-out group-hover:translate-x-full" />
+            <span className="relative z-10">Open Live Site ↗</span>
+          </motion.a>
+
+          <motion.div
+            whileHover={reduceMotion ? undefined : { scale: 1.05, y: -1 }}
+            whileTap={reduceMotion ? undefined : { scale: 0.95 }}
+          >
+            <Link
+              href={`/projects/${project.slug}`}
+              className="inline-flex items-center gap-1.5 rounded-lg px-5 py-2 text-xs font-bold bg-white/10 text-white backdrop-blur-md border border-white/20 hover:bg-white/20 transition-colors"
+            >
+              View Details →
+            </Link>
+          </motion.div>
+        </div>
+      </div>
+    </motion.article>
   );
 }
 
-/* ── Section ─────────────────────────────────────────────────────── */
 export function Projects() {
+  const reduceMotion = useReducedMotion();
+
   return (
-    <section className="relative border-y border-black/5 py-20 dark:border-white/5 md:py-28">
-      <div className="mx-auto max-w-4xl px-6">
+    <section
+      id="projects"
+      className="border-t py-24 md:py-32"
+      style={{ borderColor: "var(--border)" }}
+    >
+      <div className="mx-auto max-w-7xl px-6 md:px-10">
 
         {/* Header */}
-        <div className="md:flex md:items-end md:justify-between md:gap-8">
-          <div>
-            <FadeIn>
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">My Work</p>
-              <motion.span
-                className="mt-1.5 block h-0.5 w-8 rounded-full bg-linear-to-r from-accent to-cyan-300"
-                style={{ originX: 0 }}
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: [1, 2, 1] }}
-                transition={{ duration: 2, delay: 0.5, repeat: Infinity, ease: "easeInOut" }}
-              />
-            </FadeIn>
-            <SplitHeading className="mt-3 text-3xl font-bold text-foreground md:text-4xl">
-              Projects I&apos;ve shipped
-            </SplitHeading>
+        <div className="mb-16 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <SectionHeading eyebrow="My Work" title="{Projects} I've shipped" />
+          <div className="max-w-sm text-sm leading-relaxed" style={{ color: "var(--muted)" }}>
+            <FramerBlurWordReveal text="Live apps across travel, e-commerce, logistics, and education — each deployed and ready to explore." delay={0.25} />
           </div>
-          <FadeIn>
-            <p className="mt-4 max-w-md text-muted md:mt-0 md:text-right">
-              Live apps across travel, e-commerce, logistics, and education — each deployed and ready to explore.
-            </p>
-          </FadeIn>
         </div>
 
-        {/* Cards */}
-        <div className="mt-10 flex flex-col gap-5">
+        {/* Project cards list */}
+        <div className="flex flex-col gap-8">
           {projects.map((project, i) => (
             <ProjectCard key={project.slug} project={project} index={i} />
           ))}

@@ -1,10 +1,5 @@
-import { FullPageShell } from "@/components/FullPageShell";
-import { SectionNavigationProvider } from "@/context/SectionNavigation";
+import { MainLayout } from "@/components/MainLayout";
 
 export default function Home() {
-  return (
-    <SectionNavigationProvider>
-      <FullPageShell />
-    </SectionNavigationProvider>
-  );
+  return <MainLayout />;
 }

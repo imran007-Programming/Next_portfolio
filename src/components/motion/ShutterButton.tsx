@@ -50,7 +50,7 @@ export function ShutterButton({
   const isDark = resolvedTheme !== "light";
 
   const base =
-    "group relative inline-flex cursor-pointer items-center justify-center overflow-hidden rounded-full px-7 py-3.5 text-sm font-semibold transition-all duration-300 hover:scale-105 hover:shadow-[0_0_25px_rgba(99,102,241,0.4)] dark:hover:shadow-[0_0_25px_rgba(45,212,191,0.4)]";
+    "group relative inline-flex cursor-pointer items-center justify-center overflow-hidden rounded-lg px-7 py-3.5 text-sm font-semibold transition-all duration-300 hover:scale-105 hover:shadow-[0_0_25px_rgba(99,102,241,0.4)] dark:hover:shadow-[0_0_25px_rgba(45,212,191,0.4)]";
 
   const variantClasses =
     variant === "primary"

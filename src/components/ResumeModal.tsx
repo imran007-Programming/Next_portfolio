@@ -68,7 +68,7 @@ export function ResumeModal({ open, onClose }: ResumeModalProps) {
                 <button
                   type="button"
                   onClick={onClose}
-                  className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-black/15 text-muted transition-colors hover:border-black/30 hover:text-foreground dark:border-white/15 dark:hover:border-white/30"
+                  className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-black/15 text-muted transition-colors hover:border-black/30 hover:text-foreground dark:border-white/15 dark:hover:border-white/30"
                   aria-label="Close"
                 >
                   ✕

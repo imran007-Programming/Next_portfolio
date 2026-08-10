@@ -2,97 +2,138 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* ── Light mode (default) ─────────────────────────── */
+/* ── iboxlab-style Design System ───────────────────────────────── */
 :root {
-  --background: #f8fafc;
-  --surface:    #ffffff;
-  --surface-2:  #f1f5f9;
-  --foreground: #0f172a;
-  --muted:      #64748b;
-  --accent:     #2dd4bf;
+  --background:  #080808;
+  --surface:     #111111;
+  --surface-2:   #161616;
+  --border:      #222222;
+  --foreground:  #f0f0f0;
+  --muted:       #888888;
+  --accent:      #8b5cf6;
+  --accent-dim:  rgba(139,92,246,0.15);
 }
 
-/* ── Dark mode ────────────────────────────────────── */
 .dark {
-  --background: #0b0f14;
-  --surface:    #0d1117;
-  --surface-2:  #070a0e;
-  --foreground: #e4e4e7;
-  --muted:      #71717a;
-  --accent:     #2dd4bf;
+  --background:  #080808;
+  --surface:     #111111;
+  --surface-2:   #161616;
+  --border:      #222222;
+  --foreground:  #f0f0f0;
+  --muted:       #888888;
+  --accent:      #8b5cf6;
+  --accent-dim:  rgba(139,92,246,0.15);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-surface:    var(--surface);
   --color-surface-2:  var(--surface-2);
+  --color-border:     var(--border);
   --color-foreground: var(--foreground);
-  --color-accent:     var(--accent);
   --color-muted:      var(--muted);
+  --color-accent:     var(--accent);
   --font-sans:        var(--font-poppins);
   --font-display:     var(--font-poppins);
 }
 
 html {
   scroll-behavior: smooth;
-  height: 100%;
-  overflow: hidden;
 }
 
 body {
-  height: 100%;
-  overflow: hidden;
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-poppins), system-ui, sans-serif;
-  transition: background 0.3s ease, color 0.3s ease;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  cursor: auto;
 }
 
+/* ── Restore normal cursor everywhere ────────────────────────────── */
+*, *::before, *::after {
+  cursor: inherit;
+}
+a, button, [role="button"], label, select,
+input[type="submit"], input[type="button"],
+input[type="reset"] {
+  cursor: pointer;
+}
+input, textarea {
+  cursor: text;
+}
+
+
 ::selection {
-  background: color-mix(in srgb, var(--accent) 35%, transparent);
+  background: rgba(139,92,246,0.35);
   color: #fff;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
+/* ── Marquee animation ──────────────────────────────────────────── */
+@keyframes marquee-ltr {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+@keyframes marquee-rtl {
+  0%   { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-ltr 28s linear infinite;
+}
+.marquee-track-slow {
+  display: flex;
+  width: max-content;
+  animation: marquee-ltr 40s linear infinite;
+}
+.marquee-track:hover,
+.marquee-track-slow:hover {
+  animation-play-state: paused;
 }
 
+/* ── Accordion ──────────────────────────────────────────────────── */
+.accordion-content {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.4s cubic-bezier(0.22,1,0.36,1);
+}
+.accordion-content.open {
+  grid-template-rows: 1fr;
+}
+.accordion-inner {
+  overflow: hidden;
+}
 
-/* General spin (avatar border light) */
+/* ── Shimmer on hero name ──────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: 200% center; }
+  100% { background-position: 0%   center; }
+}
+.text-shimmer {
+  background: linear-gradient(90deg, #8b5cf6 0%, #a78bfa 30%, #c084fc 60%, #8b5cf6 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 4s linear infinite;
+}
+@media (max-width: 767px) {
+  .text-shimmer { animation: none; background-position: 0% center; }
+}
+
+/* ── Spin ───────────────────────────────────────────────────────── */
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
 
-/* Hero image border animation */
-.border-animation-wrapper {
-  position: relative;
-  background: var(--background);
-}
-.border-animation-wrapper::before {
-  content: "";
-  position: absolute;
-  inset: -3px;
-  border-radius: 0;
-  background: conic-gradient(
-    from 0deg,
-    transparent 0%,
-    transparent 65%,
-    rgba(45, 212, 191, 0.2) 78%,
-    rgba(45, 212, 191, 0.85) 88%,
-    #2dd4bf 93%,
-    #67e8f9 97%,
-    transparent 100%
-  );
-  animation: spin 3s linear infinite;
-  z-index: -1;
-}
-
-/* Hire button ring rotation */
+/* ── Spin slow (hire button) ────────────────────────────────────── */
 @keyframes spin-slow {
   to { transform: rotate(360deg); }
 }
 
-/* Hire button — fluid water layers (Y slosh + X drift + aggressive border-radius morphing) */
+/* ── Water blobs (hire button) ─────────────────────────────────── */
 @keyframes water-a {
   0%   { transform: translateY(0px)   translateX(0px);   border-radius: 35% 65% 60% 40% / 55% 38% 62% 45%; }
   20%  { transform: translateY(-10px) translateX(6px);   border-radius: 62% 38% 42% 58% / 38% 62% 38% 62%; }
@@ -115,38 +156,25 @@ body {
   100% { transform: translateY(-4px)  translateX(4px);   border-radius: 45% 55% 62% 38% / 50% 55% 45% 50%; }
 }
 
-/* Animated gradient for hero name */
-@keyframes shimmer {
-  0%   { background-position: 200% center; }
-  100% { background-position: 0%   center; }
-}
-.text-shimmer {
-  background: linear-gradient(90deg, var(--accent) 0%, #67e8f9 25%, #c084fc 55%, var(--accent) 100%);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: shimmer 4s linear infinite;
+/* ── Neon pulse ─────────────────────────────────────────────────── */
+@keyframes neon-pulse {
+  0%, 100% { box-shadow: 0 0 8px var(--accent), 0 0 16px var(--accent); }
+  50%       { box-shadow: 0 0 16px var(--accent), 0 0 36px var(--accent); }
 }
 
-/* Disable shimmer on mobile — background-position is paint-only, not composited */
-@media (max-width: 767px) {
-  .text-shimmer {
-    animation: none;
-    background-position: 0% center;
-  }
-}
-
-/* Disable default cross-fade so our circular clip animation runs unobstructed */
+/* ── View transitions ───────────────────────────────────────────── */
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation: none;
   mix-blend-mode: normal;
 }
-
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-old(root),
   ::view-transition-new(root) {
     display: none;
   }
 }
+
+/* ── Line clamp ─────────────────────────────────────────────────── */
+.line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
