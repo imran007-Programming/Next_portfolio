@@ -4,37 +4,23 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { site, navLinks } from "@/data/site";
 import { CommandPalette } from "@/components/CommandPalette";
+import { ColorPicker } from "@/components/ColorPicker";
 
 export function Header() {
   const reduceMotion = useReducedMotion();
   const [scrolled, setScrolled] = useState(false);
-  const [hidden, setHidden] = useState(false);   // hide on scroll-down
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("hero");
-  const lastScrollY = useRef(0);
   const ticking = useRef(false);
 
-  /* ── Track scroll: bg opacity + section highlight + hide/show ── */
   useEffect(() => {
     const onScroll = () => {
       if (ticking.current) return;
       ticking.current = true;
-
       requestAnimationFrame(() => {
         const y = window.scrollY;
-        const delta = y - lastScrollY.current;
+        setScrolled(y > 80);
 
-        /* Only trigger hide/show after passing hero area */
-        if (y > 120) {
-          if (delta > 6)  setHidden(true);   // scrolling DOWN  → hide
-          if (delta < -6) setHidden(false);  // scrolling UP   → show
-        } else {
-          setHidden(false); // always show at top
-        }
-
-        setScrolled(y > 60);
-
-        /* Active section highlight */
         const sections = ["hero", "about", "skills", "projects", "contact"];
         for (const id of [...sections].reverse()) {
           const el = document.getElementById(id);
@@ -44,7 +30,6 @@ export function Header() {
           }
         }
 
-        lastScrollY.current = y;
         ticking.current = false;
       });
     };
@@ -63,54 +48,51 @@ export function Header() {
 
   return (
     <>
-      <motion.header
-        className="fixed inset-x-0 top-6 z-50 px-4 sm:px-6 md:px-10"
-        /* sits BELOW the marquee banner (which is ~32px tall) */
-        animate={{
-          y: hidden ? -90 : 0,
-          opacity: hidden ? 0 : 1,
-        }}
-        transition={{
-          y:       { type: "spring", stiffness: 260, damping: 28 },
-          opacity: { duration: 0.25, ease: "easeInOut" },
-        }}
-      >
+      <div className="fixed inset-x-0 top-5 z-50 flex justify-center px-4">
         <motion.div
-          className="mx-auto flex h-14 w-full items-center justify-between rounded-lg px-5"
+          className="flex items-center justify-between rounded-full px-4 border"
           animate={{
-            maxWidth: scrolled ? "52rem" : "64rem",
+            width: scrolled ? "860px" : "900px",
+            height: scrolled ? "48px" : "56px",
             background: scrolled
-              ? "rgba(12,12,12,0.88)"
-              : "rgba(12,12,12,0.55)",
+              ? "rgba(10,10,10,0.95)"
+              : "rgba(10,10,10,0.6)",
             borderColor: scrolled
               ? "rgba(255,255,255,0.12)"
-              : "rgba(255,255,255,0.06)",
+              : "rgba(255,255,255,0.07)",
             boxShadow: scrolled
-              ? "0 8px 32px rgba(0,0,0,0.4), 0 0 16px rgba(139,92,246,0.15)"
-              : "none",
-            backdropFilter: "blur(20px)",
+              ? "0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04), inset 0 1px 0 rgba(255,255,255,0.06)"
+              : "0 2px 12px rgba(0,0,0,0.2)",
           }}
           style={{
-            border: "1px solid rgba(255,255,255,0.06)",
+            backdropFilter: "blur(20px)",
             WebkitBackdropFilter: "blur(20px)",
+            maxWidth: "100%",
           }}
           transition={{
-            maxWidth: { type: "spring", stiffness: 220, damping: 26 },
-            duration: 0.3,
+            width: { type: "spring", stiffness: 200, damping: 30 },
+            height: { type: "spring", stiffness: 200, damping: 30 },
+            background: { duration: 0.4 },
+            boxShadow: { duration: 0.4 },
+            borderColor: { duration: 0.4 },
           }}
         >
           {/* Logo */}
-          <button
-            className="text-sm font-bold tracking-tight transition-colors duration-200 hover:text-accent"
+          <motion.button
+            className="shrink-0 font-bold tracking-tight"
             style={{ color: "var(--foreground)", background: "none", border: "none" }}
+            animate={{ fontSize: scrolled ? "13px" : "14px" }}
+            transition={{ duration: 0.3 }}
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            whileHover={{ opacity: 0.8 }}
+            whileTap={{ scale: 0.95 }}
           >
             {site.name}
             <span style={{ color: "var(--accent)" }}>.</span>
-          </button>
+          </motion.button>
 
-          {/* Desktop nav — centered pill links */}
-          <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 md:flex">
+          {/* Desktop nav */}
+          <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-0.5 md:flex">
             {navLinks.map((link) => {
               const id = link.href.replace("#", "");
               const isActive = activeSection === id;
@@ -118,7 +100,7 @@ export function Header() {
                 <button
                   key={link.href}
                   onClick={() => scrollTo(link.href)}
-                  className="relative rounded-lg px-4 py-1.5 text-sm transition-colors duration-200"
+                  className="relative rounded-full px-4 py-1.5 text-sm font-medium transition-colors duration-200"
                   style={{
                     color: isActive ? "var(--foreground)" : "var(--muted)",
                     background: "none",
@@ -127,10 +109,10 @@ export function Header() {
                 >
                   {isActive && (
                     <motion.span
-                      layoutId="nav-active"
-                      className="absolute inset-0 rounded-lg"
+                      layoutId="pill-active"
+                      className="absolute inset-0 rounded-full"
                       style={{ background: "rgba(255,255,255,0.08)" }}
-                      transition={{ type: "spring", stiffness: 350, damping: 35 }}
+                      transition={{ type: "spring", stiffness: 380, damping: 34 }}
                     />
                   )}
                   <span className="relative z-10">{link.label}</span>
@@ -140,20 +122,19 @@ export function Header() {
           </nav>
 
           {/* Right side */}
-          <div className="flex items-center gap-2.5">
+          <div className="flex shrink-0 items-center gap-2">
+            <ColorPicker />
             <CommandPalette />
 
             <motion.button
               onClick={() => scrollTo("#contact")}
-              className="group relative overflow-hidden hidden rounded-lg px-5 py-2 text-xs font-bold uppercase tracking-wider md:block shadow-md"
-              style={{
-                background: "var(--accent)",
-                color: "#080808",
-              }}
-              whileHover={reduceMotion ? undefined : { scale: 1.06, y: -1, boxShadow: "0 0 20px rgba(139,92,246,0.6)" }}
+              className="group relative hidden overflow-hidden rounded-full text-xs font-bold uppercase tracking-wider md:block"
+              style={{ background: "var(--accent)", color: "#080808", border: "none" }}
+              animate={{ paddingLeft: scrolled ? "14px" : "18px", paddingRight: scrolled ? "14px" : "18px", paddingTop: "7px", paddingBottom: "7px" }}
+              transition={{ duration: 0.3 }}
+              whileHover={reduceMotion ? undefined : { scale: 1.05, y: -1 }}
               whileTap={reduceMotion ? undefined : { scale: 0.95 }}
             >
-              {/* Sheen beam */}
               <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-[-20deg] transition-transform duration-700 ease-out group-hover:translate-x-full" />
               <span className="relative z-10">Hire Me</span>
             </motion.button>
@@ -165,67 +146,64 @@ export function Header() {
               aria-label="Toggle menu"
               style={{ background: "none", border: "none" }}
             >
-              <motion.span
-                className="block h-[1.5px] w-5 rounded-lg"
-                style={{ background: "var(--foreground)" }}
-                animate={{ rotate: mobileOpen ? 45 : 0, y: mobileOpen ? 6.5 : 0 }}
-                transition={{ duration: 0.25 }}
-              />
-              <motion.span
-                className="block h-[1.5px] w-5 rounded-lg"
-                style={{ background: "var(--foreground)" }}
-                animate={{ opacity: mobileOpen ? 0 : 1, scaleX: mobileOpen ? 0 : 1 }}
-                transition={{ duration: 0.2 }}
-              />
-              <motion.span
-                className="block h-[1.5px] w-5 rounded-lg"
-                style={{ background: "var(--foreground)" }}
-                animate={{ rotate: mobileOpen ? -45 : 0, y: mobileOpen ? -6.5 : 0 }}
-                transition={{ duration: 0.25 }}
-              />
+              <motion.span className="block h-[1.5px] w-5 rounded-full" style={{ background: "var(--foreground)" }}
+                animate={{ rotate: mobileOpen ? 45 : 0, y: mobileOpen ? 6.5 : 0 }} transition={{ duration: 0.25 }} />
+              <motion.span className="block h-[1.5px] w-5 rounded-full" style={{ background: "var(--foreground)" }}
+                animate={{ opacity: mobileOpen ? 0 : 1, scaleX: mobileOpen ? 0 : 1 }} transition={{ duration: 0.2 }} />
+              <motion.span className="block h-[1.5px] w-5 rounded-full" style={{ background: "var(--foreground)" }}
+                animate={{ rotate: mobileOpen ? -45 : 0, y: mobileOpen ? -6.5 : 0 }} transition={{ duration: 0.25 }} />
             </button>
           </div>
         </motion.div>
 
-        {/* Mobile dropdown — Shutter roll-down effect */}
+        {/* Mobile dropdown */}
         <AnimatePresence>
           {mobileOpen && (
             <motion.div
-              className="mx-auto mt-2 max-w-5xl overflow-hidden rounded-2xl"
+              className="absolute top-[70px] left-4 right-4 overflow-hidden rounded-2xl"
               style={{
-                background: "rgba(12,12,12,0.96)",
+                background: "rgba(10,10,10,0.97)",
                 border: "1px solid rgba(255,255,255,0.1)",
                 backdropFilter: "blur(24px)",
                 WebkitBackdropFilter: "blur(24px)",
-                boxShadow: "0 16px 40px rgba(0,0,0,0.6), 0 0 20px rgba(139,92,246,0.15)",
+                boxShadow: "0 16px 40px rgba(0,0,0,0.6)",
               }}
-              initial={{ height: 0, opacity: 0, clipPath: "inset(0 0 100% 0)" }}
-              animate={{ height: "auto", opacity: 1, clipPath: "inset(0 0 0% 0)" }}
-              exit={{ height: 0, opacity: 0, clipPath: "inset(0 0 100% 0)" }}
-              transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+              initial={{ opacity: 0, y: -12, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -12, scale: 0.97 }}
+              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
             >
-              <div className="flex flex-col gap-1.5 p-4">
-                {navLinks.map((link, i) => (
-                  <motion.button
-                    key={link.href}
-                    onClick={() => scrollTo(link.href)}
-                    className="flex items-center justify-between rounded-xl px-4 py-3 text-left text-base font-semibold transition-colors duration-200 hover:bg-white/10 hover:text-white"
-                    style={{ color: "var(--foreground)", background: "none", border: "none" }}
-                    initial={{ opacity: 0, y: -14 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: 0.12 + i * 0.06 }}
-                  >
-                    <span>{link.label}</span>
-                    <span className="text-xs text-muted font-mono">0{i + 1}</span>
-                  </motion.button>
-                ))}
+              <div className="flex flex-col gap-1 p-3">
+                {navLinks.map((link, i) => {
+                  const id = link.href.replace("#", "");
+                  const isActive = activeSection === id;
+                  return (
+                    <motion.button
+                      key={link.href}
+                      onClick={() => scrollTo(link.href)}
+                      className="flex items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold"
+                      style={{
+                        color: isActive ? "var(--accent)" : "var(--foreground)",
+                        background: isActive ? "var(--accent-dim)" : "transparent",
+                        border: "none",
+                      }}
+                      initial={{ opacity: 0, y: -8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.05 + i * 0.05 }}
+                    >
+                      <span>{link.label}</span>
+                      <span className="font-mono text-xs" style={{ color: "var(--muted)" }}>0{i + 1}</span>
+                    </motion.button>
+                  );
+                })}
                 <motion.button
                   onClick={() => scrollTo("#contact")}
-                  className="mt-2 rounded-xl py-3.5 text-center text-sm font-bold uppercase tracking-wider transition-all duration-300 active:scale-98"
+                  className="mt-1 rounded-xl py-3 text-center text-sm font-bold uppercase tracking-wider"
                   style={{ background: "var(--accent)", color: "#080808", border: "none" }}
-                  initial={{ opacity: 0, y: -14 }}
+                  initial={{ opacity: 0, y: -8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: 0.12 + navLinks.length * 0.06 }}
+                  transition={{ delay: 0.05 + navLinks.length * 0.05 }}
+                  whileTap={{ scale: 0.97 }}
                 >
                   Hire Me
                 </motion.button>
@@ -233,7 +211,7 @@ export function Header() {
             </motion.div>
           )}
         </AnimatePresence>
-      </motion.header>
+      </div>
     </>
   );
 }

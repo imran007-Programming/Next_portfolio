@@ -102,7 +102,7 @@ export function Hero() {
                   <Framer3DWordFlip text="Building" delay={0.1} />
                 </div>
                 <div className="flex flex-wrap items-center gap-x-3 sm:gap-x-5">
-                  <span className="text-[#a78bfa] sm:text-shimmer font-bold">
+                  <span className="text-accent sm:text-shimmer font-bold">
                     <Framer3DWordFlip text="Digital" delay={0.25} />
                   </span>
                   

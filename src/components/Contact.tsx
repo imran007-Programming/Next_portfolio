@@ -163,7 +163,7 @@ export function Contact() {
             {submitted ? (
               <div
                 className="flex flex-col items-center justify-center rounded-2xl border py-16 text-center"
-                style={{ borderColor: "rgba(139,92,246,0.3)", background: "rgba(139,92,246,0.04)" }}
+                style={{ borderColor: "var(--accent-dim)", background: "var(--accent-dim)" }}
               >
                 <span className="mb-4 text-4xl">✅</span>
                 <h3 className="text-lg font-bold" style={{ color: "var(--foreground)" }}>
@@ -253,9 +253,9 @@ export function Contact() {
                 <motion.button
                   type="submit"
                   disabled={loading}
-                  className="group relative overflow-hidden mt-3 flex items-center justify-center gap-2 rounded-2xl py-4 text-sm font-bold text-white shadow-[0_0_30px_rgba(139,92,246,0.35)] transition-all duration-300 disabled:opacity-50"
-                  style={{ background: "linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)" }}
-                  whileHover={loading ? undefined : { scale: 1.02, y: -2, boxShadow: "0 0 35px rgba(139,92,246,0.6)" }}
+                  className="group relative overflow-hidden mt-3 flex items-center justify-center gap-2 rounded-2xl py-4 text-sm font-bold text-white transition-all duration-300 disabled:opacity-50"
+                  style={{ background: "var(--accent)", boxShadow: "0 0 30px var(--accent-dim)" }}
+                  whileHover={loading ? undefined : { scale: 1.02, y: -2 }}
                   whileTap={loading ? undefined : { scale: 0.96 }}
                 >
                   {/* Continuous Sheen Beam Sweep */}
@@ -293,7 +293,7 @@ export function Contact() {
           transition={{ duration: 1.5, ease: "easeOut" }}
         />
         <motion.div
-          className="absolute right-1/4 bottom-10 -z-10 h-80 w-80 rounded-full bg-purple-600/10 blur-[130px] pointer-events-none"
+          className="absolute right-1/4 bottom-10 -z-10 h-80 w-80 rounded-full bg-sky-600/10 blur-[130px] pointer-events-none"
           initial={{ opacity: 0, scale: 0.8 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}

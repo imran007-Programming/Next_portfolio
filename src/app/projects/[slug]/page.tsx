@@ -12,7 +12,7 @@ export function generateStaticParams() {
 
 const TECH_COLORS: Record<string, string> = {
   "React": "#38bdf8", "Next.js": "#a3a3a3", "TypeScript": "#60a5fa",
-  "JavaScript": "#fbbf24", "Tailwind CSS": "#2dd4bf", "Vite": "#a78bfa",
+  "JavaScript": "#fbbf24", "Tailwind CSS": "#2dd4bf", "Vite": "var(--accent)",
   "Framer Motion": "#f472b6", "Vercel": "#94a3b8", "CSS": "#818cf8",
   "Audio API": "#34d399", "Node.js": "#86efac", "Express": "#c9d1d9",
   "Prisma": "#a5b4fc", "PostgreSQL": "#93c5fd", "MongoDB": "#6ee7b7",
@@ -38,13 +38,13 @@ export default async function ProjectPage({
   const nextNum = String((index + 2) > projects.length ? 1 : index + 2).padStart(2, "0");
 
   return (
-    <div className="min-h-screen selection:bg-purple-500/30 selection:text-white" style={{ background: "#080808", color: "#f0f0f0" }}>
+    <div className="min-h-screen selection:bg-sky-500/30 selection:text-white" style={{ background: "#080808", color: "#f0f0f0" }}>
 
       {/* ── Ambient purple background glow ── */}
       <div
         className="pointer-events-none fixed top-0 left-1/2 -translate-x-1/2 z-0 h-[500px] w-full max-w-7xl opacity-20 blur-3xl"
         style={{
-          background: "radial-gradient(circle at top, rgba(139,92,246,0.5) 0%, transparent 70%)",
+          background: "radial-gradient(circle at top, var(--accent-dim) 0%, transparent 70%)",
         }}
         aria-hidden
       />
@@ -88,7 +88,7 @@ export default async function ProjectPage({
               <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </Link>
-          <span className="px-2 font-mono text-xs font-bold tabular-nums" style={{ color: "#8b5cf6" }}>
+          <span className="px-2 font-mono text-xs font-bold tabular-nums" style={{ color: "var(--accent)" }}>
             {num} / {String(projects.length).padStart(2, "0")}
           </span>
           <Link
@@ -109,7 +109,7 @@ export default async function ProjectPage({
         {/* ── Project Header Title ── */}
         <div className="mb-10">
           <div className="flex flex-wrap items-center gap-3">
-            <span className="font-mono text-sm font-bold tabular-nums" style={{ color: "#8b5cf6" }}>
+            <span className="font-mono text-sm font-bold tabular-nums" style={{ color: "var(--accent)" }}>
               Case Study #{num}
             </span>
             {project.details && (
@@ -117,7 +117,7 @@ export default async function ProjectPage({
                 <span className="h-3 w-px" style={{ background: "rgba(255,255,255,0.15)" }} />
                 <span
                   className="rounded-full px-3 py-0.5 text-xs font-semibold"
-                  style={{ background: "rgba(139,92,246,0.15)", border: "1px solid rgba(139,92,246,0.3)", color: "#c084fc" }}
+                  style={{ background: "var(--accent-dim)", border: "1px solid var(--accent)", color: "var(--accent)" }}
                 >
                   {project.details.role}
                 </span>
@@ -142,7 +142,7 @@ export default async function ProjectPage({
 
         {/* ── Hero Image / Preview Box ── */}
         <div
-          className="overflow-hidden rounded-2xl shadow-2xl transition-all duration-500 hover:border-purple-500/30"
+          className="overflow-hidden rounded-2xl shadow-2xl transition-all duration-500 hover:border-sky-500/30"
           style={{ border: "1px solid rgba(255,255,255,0.1)", background: "rgba(17,17,17,0.7)" }}
         >
           {project.scrollPreview ? (
@@ -168,7 +168,7 @@ export default async function ProjectPage({
         {/* ── Actions & Tech Stack Row ── */}
         <div className="mt-10 grid gap-8 md:grid-cols-[1fr_auto] md:items-center">
           <div>
-            <p className="text-xs font-mono font-bold uppercase tracking-widest" style={{ color: "rgba(139,92,246,0.8)" }}>
+            <p className="text-xs font-mono font-bold uppercase tracking-widest" style={{ color: "var(--accent)" }}>
               Tech Stack &amp; Tools
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
@@ -212,10 +212,10 @@ export default async function ProjectPage({
             {project.metrics.map((m) => (
               <div
                 key={m.label}
-                className="group rounded-2xl p-6 text-center transition-all duration-300 hover:border-purple-500/40 hover:-translate-y-1"
+                className="group rounded-2xl p-6 text-center transition-all duration-300 hover:border-sky-500/40 hover:-translate-y-1"
                 style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.08)" }}
               >
-                <p className="text-3xl font-extrabold tabular-nums transition-colors group-hover:text-accent" style={{ color: "#8b5cf6" }}>
+                <p className="text-3xl font-extrabold tabular-nums transition-colors group-hover:text-accent" style={{ color: "var(--accent)" }}>
                   {m.value}
                 </p>
                 <p className="mt-1.5 text-xs font-semibold uppercase tracking-wider" style={{ color: "#a3a3a3" }}>
@@ -230,8 +230,8 @@ export default async function ProjectPage({
         {project.details?.highlights && (
           <div className="mt-16">
             <div className="mb-6 flex items-center gap-3">
-              <span className="h-px w-8" style={{ background: "rgba(139,92,246,0.5)" }} />
-              <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "#c084fc" }}>
+              <span className="h-px w-8" style={{ background: "var(--accent)" }} />
+              <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--accent)" }}>
                 Key Features &amp; Engineering Highlights
               </p>
               <span className="h-px flex-1" style={{ background: "rgba(255,255,255,0.08)" }} />
@@ -241,15 +241,15 @@ export default async function ProjectPage({
               {project.details.highlights.map((h, i) => (
                 <div
                   key={i}
-                  className="group flex items-start gap-3.5 rounded-2xl p-5 transition-all duration-300 hover:border-purple-500/30"
+                  className="group flex items-start gap-3.5 rounded-2xl p-5 transition-all duration-300 hover:border-sky-500/30"
                   style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.08)" }}
                 >
                   <span
                     className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full transition-transform group-hover:scale-110"
-                    style={{ background: "rgba(139,92,246,0.2)", border: "1px solid rgba(139,92,246,0.4)" }}
+                    style={{ background: "var(--accent-dim)", border: "1px solid var(--accent)" }}
                   >
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden>
-                      <path d="M20 6L9 17l-5-5" stroke="#c084fc" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                      <path d="M20 6L9 17l-5-5" stroke="var(--accent)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </span>
                   <p className="text-sm leading-relaxed" style={{ color: "#d4d4d4" }}>{h}</p>
@@ -263,8 +263,8 @@ export default async function ProjectPage({
         {project.gallery && project.gallery.length > 0 && (
           <div className="mt-20">
             <div className="mb-6 flex items-center gap-3">
-              <span className="h-px w-8" style={{ background: "rgba(139,92,246,0.5)" }} />
-              <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "#c084fc" }}>
+              <span className="h-px w-8" style={{ background: "var(--accent)" }} />
+              <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--accent)" }}>
                 Project Screenshots &amp; Gallery
               </p>
               <span className="h-px flex-1" style={{ background: "rgba(255,255,255,0.08)" }} />

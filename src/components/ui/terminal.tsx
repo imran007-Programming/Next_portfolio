@@ -223,7 +223,7 @@ export function Terminal({
       {/* Hidden audio element for typing sound */}
       <audio ref={audioRef} src="/sounds/sound.ogg" preload="auto" loop />
       {/* Ambient Background Glow */}
-      <div className="absolute -top-16 -right-16 h-44 w-44 rounded-full bg-purple-600/20 blur-3xl pointer-events-none" />
+      <div className="absolute -top-16 -right-16 h-44 w-44 rounded-full blur-3xl pointer-events-none" style={{ background: "var(--accent-dim)" }} />
 
       {/* Header Bar */}
       <div className="flex items-center justify-between border-b border-white/10 bg-white/[0.03] px-4 py-3 select-none">
@@ -232,25 +232,35 @@ export function Terminal({
           <span className="h-3 w-3 rounded-full bg-amber-500/80 inline-block" />
           <span className="h-3 w-3 rounded-full bg-emerald-500/80 inline-block" />
           <span className="ml-2 font-mono text-xs text-neutral-400 font-medium flex items-center gap-1.5">
-            <span className="text-purple-400">bash</span> ~ /imran-dev
+            <span style={{ color: "var(--accent)" }}>bash</span> ~ /imran-dev
           </span>
         </div>
 
         <div className="flex items-center gap-2">
           <button
             onClick={() => setSoundEnabled((prev) => !prev)}
-            className={`rounded-md border border-white/10 px-2 py-1 text-[11px] font-mono transition-all ${
+            className={`rounded-md border px-2 py-1 text-[11px] font-mono transition-all ${
               soundEnabled
-                ? "bg-purple-500/20 text-purple-300 border-purple-500/40"
-                : "bg-white/5 text-neutral-400"
+                ? "border-white/10"
+                : "bg-white/5 text-neutral-400 border-white/10"
             }`}
+            style={soundEnabled ? {
+              background: "var(--accent-dim)",
+              color: "var(--accent)",
+              borderColor: "var(--accent)"
+            } : undefined}
             title={soundEnabled ? "Mute typing sound" : "Enable typing sound"}
           >
             {soundEnabled ? "🔊 Sound" : "🔇 Mute"}
           </button>
           <button
             onClick={handleReplay}
-            className="flex items-center gap-1 rounded-md border border-purple-500/30 bg-purple-500/10 px-2.5 py-1 text-[11px] font-mono text-purple-300 transition-all hover:bg-purple-500/20 active:scale-95"
+            className="flex items-center gap-1 rounded-md border px-2.5 py-1 text-[11px] font-mono transition-all hover:opacity-80 active:scale-95"
+            style={{
+              borderColor: "var(--accent)",
+              background: "var(--accent-dim)",
+              color: "var(--accent)"
+            }}
           >
             Replay ⚡
           </button>
@@ -279,9 +289,10 @@ export function Terminal({
                   item.text.startsWith("✔") || item.text.startsWith("🟢") || item.text.startsWith("🚀")
                     ? "text-emerald-400 font-medium"
                     : item.text.startsWith("➜")
-                    ? "text-purple-300 font-semibold"
+                    ? "font-semibold"
                     : "text-neutral-300"
                 }`}
+                style={item.text.startsWith("➜") ? { color: "var(--accent)" } : undefined}
               >
                 {item.text}
               </span>
@@ -297,7 +308,8 @@ export function Terminal({
               {currentCmdText.slice(0, charIndex)}
             </span>
             <motion.span
-              className="inline-block h-4 w-2 bg-purple-400 self-center -ml-1"
+              className="inline-block h-4 w-2 self-center -ml-1"
+              style={{ background: "var(--accent)" }}
               animate={{ opacity: [1, 0] }}
               transition={{
                 duration: 0.5,
@@ -315,7 +327,8 @@ export function Terminal({
               {currentCmdOutputs[currentOutputLine]?.slice(0, currentOutputChar)}
             </span>
             <motion.span
-              className="inline-block h-4 w-2 bg-purple-400 self-center -ml-1"
+              className="inline-block h-4 w-2 self-center -ml-1"
+              style={{ background: "var(--accent)" }}
               animate={{ opacity: [1, 0] }}
               transition={{
                 duration: 0.5,

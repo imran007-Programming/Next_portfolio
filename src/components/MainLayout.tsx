@@ -10,11 +10,10 @@ import { Footer } from "@/components/Footer";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import { ScrollProgress } from "@/components/ScrollProgressLinear";
 import { ChatBot } from "@/components/ChatBot";
-import { SectionTransitionProvider } from "@/components/SectionTransitionOverlay";
 
 export function MainLayout() {
   return (
-    <SectionTransitionProvider>
+    <>
       {/* Global effects */}
       <SmoothScroll />
       <ScrollProgress />
@@ -36,6 +35,6 @@ export function MainLayout() {
 
       {/* Floating overlays */}
       <ChatBot />
-    </SectionTransitionProvider>
+    </>
   );
 }

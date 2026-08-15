@@ -11,8 +11,8 @@ export function LiveButton({ href }: { href: string }) {
       target="_blank"
       rel="noopener noreferrer"
       className="inline-flex items-center gap-2 rounded-full px-7 py-3 text-sm font-bold text-[#080808] transition-all duration-300"
-      style={{ background: "#8b5cf6" }}
-      whileHover={{ scale: 1.05, boxShadow: "0 0 30px rgba(139,92,246,0.6)" }}
+      style={{ background: "var(--accent)" }}
+      whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.96 }}
     >
       <span>Live site</span>
@@ -42,14 +42,14 @@ export function NextProjectCard({
           border: "1px solid rgba(255,255,255,0.08)",
         }}
         whileHover={{
-          borderColor: "rgba(139,92,246,0.4)",
-          background: "rgba(139,92,246,0.05)",
+          borderColor: "var(--accent)",
+          background: "var(--accent-dim)",
           y: -2,
         }}
         transition={{ duration: 0.25 }}
       >
         <div>
-          <p className="text-xs font-mono font-bold uppercase tracking-widest" style={{ color: "rgba(139,92,246,0.7)" }}>
+          <p className="text-xs font-mono font-bold uppercase tracking-widest" style={{ color: "var(--accent)" }}>
             Project {num}
           </p>
           <p className="mt-1 text-xl font-bold text-foreground group-hover:text-accent transition-colors">

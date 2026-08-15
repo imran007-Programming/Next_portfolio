@@ -152,11 +152,11 @@ export function SectionTransitionProvider({ children }: { children: ReactNode })
             transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
           >
             {/* Ambient Purple Radial Glow in overlay */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(139,92,246,0.25),transparent_65%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,var(--accent-dim),transparent_65%)]" />
 
             {/* Glowing Light Beam Sweeping across overlay */}
             <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-transparent via-purple-400/25 to-transparent skew-x-[-25deg]"
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-sky-400/25 to-transparent skew-x-[-25deg]"
               initial={{ x: "-100%" }}
               animate={{ x: "200%" }}
               transition={{ duration: 0.55, ease: "easeInOut" }}
@@ -171,10 +171,10 @@ export function SectionTransitionProvider({ children }: { children: ReactNode })
                 exit={{ opacity: 0, y: -15, scale: 0.95 }}
                 transition={{ duration: 0.22 }}
               >
-                <span className="font-mono text-xs uppercase tracking-[0.3em] text-purple-400">
+                <span className="font-mono text-xs uppercase tracking-[0.3em] text-sky-400">
                   Entering Section
                 </span>
-                <h3 className="text-3xl font-extrabold uppercase tracking-[0.2em] text-white sm:text-5xl drop-shadow-[0_0_25px_rgba(139,92,246,0.6)]">
+                <h3 className="text-3xl font-extrabold uppercase tracking-[0.2em] text-white sm:text-5xl" style={{ filter: "drop-shadow(0 0 25px var(--accent))" }}>
                   {activeSection}
                 </h3>
               </motion.div>

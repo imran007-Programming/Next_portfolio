@@ -13,11 +13,11 @@ export function Footer() {
 
   return (
     <footer
-      className="relative overflow-hidden border-t pt-16 pb-6 md:pt-24 backdrop-blur-2xl bg-gradient-to-b from-transparent via-purple-950/20 to-black/90"
+      className="relative overflow-hidden border-t pt-16 pb-6 md:pt-24 backdrop-blur-2xl bg-gradient-to-b from-transparent via-sky-950/20 to-black/90"
       style={{ borderColor: "var(--border)" }}
     >
       {/* Full footer glass ambient gradient glow */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(139,92,246,0.14),transparent_70%)] pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,var(--accent-dim),transparent_70%)] pointer-events-none" />
 
       <div className="relative z-10 mx-auto max-w-7xl px-6 md:px-10">
         {/* ── Columns grid (iboxlab style) ── */}

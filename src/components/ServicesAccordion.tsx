@@ -3,6 +3,47 @@
 import { useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { skillCategories, skills } from "@/data/skills";
+import {
+  SiNextdotjs, SiReact, SiTypescript, SiJavascript, SiTailwindcss,
+  SiSass, SiFramer, SiRedux, SiVite, SiHtml5,
+  SiNodedotjs, SiExpress, SiNestjs, SiGraphql,
+  SiPostgresql, SiMongodb, SiPrisma, SiRedis,
+  SiGit, SiGithub, SiDocker, SiPostman, SiVercel,
+  SiFigma, SiLinux
+} from "react-icons/si";
+import { BiServer } from "react-icons/bi";
+import { FaCode } from "react-icons/fa";
+
+const TECH_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+  "Next.js": SiNextdotjs,
+  "React": SiReact,
+  "TypeScript": SiTypescript,
+  "JavaScript": SiJavascript,
+  "Tailwind CSS": SiTailwindcss,
+  "Sass": SiSass,
+  "Framer Motion": SiFramer,
+  "Redux": SiRedux,
+  "Vite": SiVite,
+  "HTML & CSS": SiHtml5,
+  "Node.js": SiNodedotjs,
+  "Express": SiExpress,
+  "NestJS": SiNestjs,
+  "REST APIs": BiServer,
+  "GraphQL": SiGraphql,
+  "PostgreSQL": SiPostgresql,
+  "MongoDB": SiMongodb,
+  "Prisma": SiPrisma,
+  "Redis": SiRedis,
+  "Git": SiGit,
+  "GitHub": SiGithub,
+  "Docker": SiDocker,
+  "Postman": SiPostman,
+  "Vercel": SiVercel,
+  "Figma": SiFigma,
+  "VS Code": FaCode,
+  "Linux": SiLinux,
+  "CI/CD": FaCode,
+};
 
 const TECH_COLORS: Record<string, string> = {
   "Next.js": "#ffffff", "React": "#61DAFB", "TypeScript": "#3178C6",
@@ -114,18 +155,29 @@ export function ServicesAccordion() {
                     <div className="flex flex-wrap gap-2">
                       {catSkills.map((skill) => {
                         const c = TECH_COLORS[skill.name] ?? cat.accent;
+                        const Icon = TECH_ICONS[skill.name];
                         return (
-                          <span
+                          <motion.span
                             key={skill.id}
-                            className="rounded-lg px-3 py-1.5 text-xs font-semibold transition-all duration-200 hover:scale-105"
+                            className="group relative flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold transition-all duration-200 hover:scale-105 cursor-default"
                             style={{
                               background: `${c}15`,
                               border: `1px solid ${c}35`,
                               color: c,
                             }}
+                            whileHover={{ y: -2 }}
                           >
-                            {skill.name}
-                          </span>
+                            {Icon && <Icon className="text-base shrink-0" />}
+                            <span>{skill.name}</span>
+                            
+                            {/* Subtle glow on hover */}
+                            <div 
+                              className="absolute inset-0 rounded-lg opacity-0 transition-opacity duration-300 group-hover:opacity-100 pointer-events-none"
+                              style={{ 
+                                boxShadow: `0 0 20px ${c}40`,
+                              }}
+                            />
+                          </motion.span>
                         );
                       })}
                     </div>

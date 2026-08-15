@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { Poppins, Unbounded } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { ColorProvider } from "@/context/ColorContext";
 import { BackToTop } from "@/components/BackToTop";
 import { VisitAlert } from "@/components/VisitAlert";
+import { GradientBackground } from "@/components/GradientBackground";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -38,11 +40,14 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${poppins.variable} ${unbounded.variable} dark`} suppressHydrationWarning>
       <body className="min-h-screen antialiased" style={{ background: "#080808" }}>
-        <ThemeProvider>
-          {children}
-          <BackToTop />
-          <VisitAlert />
-        </ThemeProvider>
+        <GradientBackground />
+        <ColorProvider>
+          <ThemeProvider>
+            {children}
+            <BackToTop />
+            <VisitAlert />
+          </ThemeProvider>
+        </ColorProvider>
         <Analytics />
       </body>
     </html>
