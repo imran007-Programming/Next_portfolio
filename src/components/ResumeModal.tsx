@@ -39,7 +39,7 @@ export function ResumeModal({ open, onClose }: ResumeModalProps) {
         >
           <motion.button
             type="button"
-            className="absolute inset-0 bg-black/75 backdrop-blur-sm"
+            className="absolute inset-0 bg-ink/60"
             onClick={onClose}
             aria-label="Close resume preview"
             initial={reduceMotion ? false : { opacity: 0 }}
@@ -48,27 +48,27 @@ export function ResumeModal({ open, onClose }: ResumeModalProps) {
           />
 
           <motion.div
-            className="relative z-10 flex h-[min(90vh,820px)] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-black/10 bg-surface shadow-2xl dark:border-white/10"
-            initial={reduceMotion ? false : { opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="relative z-10 flex h-[min(90vh,820px)] w-full max-w-4xl flex-col overflow-hidden rounded-xl border-[3px] border-ink bg-surface shadow-[10px_10px_0_0_#0a0a0a]"
+            initial={reduceMotion ? false : { opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 30 }}
+            transition={{ type: "spring", stiffness: 380, damping: 30 }}
           >
-            <div className="flex items-center justify-between border-b border-black/10 px-5 py-4 dark:border-white/10">
-              <h3 className="font-semibold text-foreground">Resume Preview</h3>
+            <div className="flex items-center justify-between border-b-[3px] border-ink bg-accent px-5 py-3">
+              <h3 className="font-display uppercase">Resume Preview</h3>
               <div className="flex items-center gap-3">
                 <a
                   href={site.resumeUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="cursor-pointer text-sm font-medium text-accent hover:underline"
+                  className="nb-btn bg-surface px-3 py-1.5 text-xs uppercase"
                 >
-                  Open in Drive
+                  Open in Drive ↗
                 </a>
                 <button
                   type="button"
                   onClick={onClose}
-                  className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-black/15 text-muted transition-colors hover:border-black/30 hover:text-foreground dark:border-white/15 dark:hover:border-white/30"
+                  className="nb-btn h-9 w-9 bg-ink text-white"
                   aria-label="Close"
                 >
                   ✕

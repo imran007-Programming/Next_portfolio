@@ -1,241 +1,165 @@
 "use client";
 
-import Image from "next/image";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { MarqueeServices } from "@/components/MarqueeServices";
+import { SiReact, SiNodedotjs, SiTypescript, SiNextdotjs } from "react-icons/si";
 import { ResumeModal } from "@/components/ResumeModal";
 import { TypewriterGradient } from "@/components/motion/TypewriterGradient";
-import { Framer3DWordFlip, FramerBlurWordReveal } from "@/components/TextReveal";
-import { HeroCodeTerminal } from "@/components/HeroCodeTerminal";
 import { site } from "@/data/site";
+
+const pop = { type: "spring" as const, stiffness: 300, damping: 18 };
+
+/** Draggable stickers scattered around the headline (desktop only) */
+const stickers = [
+  { id: "react", label: "React", Icon: SiReact, bg: "var(--nb-blue)", pos: "left-[6%] top-[6%]", rotate: -12 },
+  { id: "next", label: "Next.js", Icon: SiNextdotjs, bg: "var(--surface)", pos: "right-[8%] top-[4%]", rotate: 8 },
+  { id: "ts", label: "TypeScript", Icon: SiTypescript, bg: "var(--nb-pink)", pos: "right-[4%] bottom-[24%]", rotate: -6 },
+  { id: "node", label: "Node.js", Icon: SiNodedotjs, bg: "var(--nb-green)", pos: "left-[5%] bottom-[18%]", rotate: 10 },
+];
 
 export function Hero() {
   const reduceMotion = useReducedMotion();
   const [resumeOpen, setResumeOpen] = useState(false);
+  const areaRef = useRef<HTMLDivElement>(null);
+
+  const rise = (delay: number) => ({
+    initial: reduceMotion ? false : { opacity: 0, y: 60 },
+    animate: { opacity: 1, y: 0 },
+    transition: { ...pop, delay },
+  });
 
   return (
     <>
       <section
         id="hero"
-        className="relative flex min-h-screen flex-col justify-between"
-        style={{ background: "var(--background)", paddingTop: "calc(72px + 16px)" }}
+        className="relative flex min-h-screen flex-col justify-between pb-12"
+        style={{ paddingTop: "calc(72px + 40px)" }}
       >
-        {/* ── Main hero content ── */}
-        <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col justify-center px-6 pb-0 pt-20 md:px-10 md:pt-28">
+        {/* ── Poster area (stickers are constrained to it) ── */}
+        <div ref={areaRef} className="relative mx-auto flex w-full max-w-7xl flex-1 flex-col items-center justify-center px-6 pb-6 text-center md:px-10">
 
-          {/* Bangladeshi Badge — compact tight width with Glaze / Sheen effect */}
-          <motion.div
-            className="group relative overflow-hidden mb-5 inline-flex w-fit self-start items-center gap-3 rounded-2xl border p-2.5 px-4 shadow-md backdrop-blur-xl transition-all duration-300 hover:border-accent/40"
-            style={{
-              borderColor: "rgba(255,255,255,0.08)",
-              background: "rgba(17,17,17,0.75)",
-            }}
-            initial={reduceMotion ? false : { opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          >
-            {/* Animated Glaze / Light Sheen Sweep Overlay */}
+          {/* Floating draggable stickers */}
+          {stickers.map((s, i) => (
             <motion.div
-              className="pointer-events-none absolute inset-0 z-10 w-1/2 bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-[-20deg]"
-              animate={reduceMotion ? undefined : { x: ["-100%", "300%"] }}
-              transition={{
-                duration: 1.3,
-                repeat: Infinity,
-                repeatDelay: 1.8,
-                ease: "easeInOut",
-              }}
-              aria-hidden
-            />
-
-            {/* Rounded Square BD Flag Icon */}
-            <div
-              className="relative flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-xl shadow-sm"
-              style={{ background: "#006A4E", border: "1px solid rgba(255,255,255,0.12)" }}
-              aria-label="Bangladesh Flag"
+              key={s.id}
+              className={`absolute z-20 hidden lg:block ${s.pos}`}
+              initial={reduceMotion ? false : { opacity: 0, scale: 0, rotate: s.rotate * 3 }}
+              animate={{ opacity: 1, scale: 1, rotate: s.rotate }}
+              transition={{ ...pop, delay: 0.7 + i * 0.1 }}
+              drag
+              dragConstraints={areaRef}
+              dragElastic={0.2}
+              whileHover={{ scale: 1.08 }}
+              whileDrag={{ scale: 1.15, rotate: 0, cursor: "grabbing" }}
+              style={{ cursor: "grab" }}
             >
-              <div className="h-4.5 w-4.5 rounded-full" style={{ background: "#F42A41" }} />
-            </div>
+              <div
+                className="flex select-none items-center gap-2 rounded-xl border-[3px] border-ink px-4 py-2.5 text-base font-bold shadow-[4px_4px_0_0_#0a0a0a]"
+                style={{ background: s.bg }}
+              >
+                <s.Icon className="text-xl" />
+                {s.label}
+              </div>
+            </motion.div>
+          ))}
 
-            {/* Text Stack */}
-            <div className="flex flex-col text-left leading-tight">
-              <p className="text-xs font-extrabold uppercase tracking-wider text-white">
-                I AM FROM{" "}
-                <span style={{ color: "#F42A41" }}>B</span>
-                <span style={{ color: "#ffffff" }}>ANGLADE</span>
-                <span style={{ color: "#10b981" }}>SH</span>
-              </p>
-              <p className="mt-0.5 text-[11px] font-semibold" style={{ color: "#888888" }}>
-                #Bangladesh
-              </p>
-            </div>
+          {/* Spinning star sticker */}
+          <motion.div
+            className="absolute bottom-[4%] right-[16%] z-10 hidden lg:block"
+            initial={reduceMotion ? false : { opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ ...pop, delay: 1.1 }}
+          >
+            <svg
+              width="92" height="92" viewBox="0 0 100 100"
+              style={reduceMotion ? undefined : { animation: "spin 12s linear infinite" }}
+              aria-hidden
+            >
+              <path
+                d="M50 2 L61 34 L95 27 L70 52 L92 80 L58 72 L50 98 L42 72 L8 80 L30 52 L5 27 L39 34 Z"
+                fill="var(--accent)" stroke="#0a0a0a" strokeWidth="4" strokeLinejoin="round"
+              />
+            </svg>
           </motion.div>
 
-          {/* Eyebrow */}
+          {/* Intro tags */}
           <motion.div
-            className="mb-6 flex items-center gap-3"
+            className="relative z-10 flex flex-wrap items-center justify-center gap-3"
             initial={reduceMotion ? false : { opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+            transition={pop}
           >
-            <motion.span
-              className="h-2 w-2 rounded-full"
-              style={{ background: "var(--accent)" }}
-              animate={reduceMotion ? undefined : { scale: [1, 1.4, 1], opacity: [1, 0.5, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
-            />
-            <span
-              className="font-mono text-xs uppercase tracking-[0.25em]"
-              style={{ color: "var(--accent)" }}
-            >
-              Full Stack Developer
+            <span className="nb-tag -rotate-2 bg-surface px-3.5 py-1.5 text-sm">
+              👋 Hi, I&apos;m {site.name} — from Bangladesh
+              <span className="ml-1 inline-flex h-4 w-6 items-center justify-center rounded-sm border-2 border-ink bg-[#006A4E]">
+                <span className="h-2 w-2 rounded-full bg-[#F42A41]" />
+              </span>
+            </span>
+            <span className="nb-tag rotate-2 bg-nb-green px-3 py-1.5 font-mono text-xs uppercase tracking-wider">
+              <motion.span
+                className="h-2.5 w-2.5 rounded-full border-2 border-ink bg-surface"
+                animate={reduceMotion ? undefined : { scale: [1, 1.35, 1] }}
+                transition={{ duration: 1.6, repeat: Infinity }}
+              />
+              Open to work
             </span>
           </motion.div>
 
-          {/* Giant headline + photo */}
-          <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
+          {/* Giant headline */}
+          <h1 className="font-display relative z-10 mt-10 text-[clamp(2.1rem,6.2vw,5.4rem)] uppercase leading-[0.95]">
+            <span className="block">Full Stack</span>
 
-            {/* Headline */}
-            <div className="max-w-4xl">
-              <h1 className="text-[clamp(2.6rem,7vw,7rem)] font-bold leading-[1.1] tracking-tighter" style={{ color: "var(--foreground)" }}>
-                <div>
-                  <Framer3DWordFlip text="Building" delay={0.1} />
-                </div>
-                <div className="flex flex-wrap items-center gap-x-3 sm:gap-x-5">
-                  <span className="text-accent sm:text-shimmer font-bold">
-                    <Framer3DWordFlip text="Digital" delay={0.25} />
-                  </span>
-                  
-                  {/* Inline Small Avatar Badge (hidden on mobile, rounded-2xl on sm+) */}
-                  <motion.span
-                    className="hidden sm:inline-flex relative overflow-hidden rounded-2xl border border-white/25 shadow-[0_8px_25px_rgba(0,0,0,0.5)] h-[1.05em] w-[1.35em] align-middle translate-y-[0.12em]"
-                    initial={reduceMotion ? false : { opacity: 0, scale: 0.8, rotate: -4 }}
-                    animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                    transition={{ duration: 0.6, delay: 0.28, ease: [0.22, 1, 0.36, 1] }}
-                  >
-                    <Image
-                      src={site.profileImage}
-                      alt={site.name}
-                      fill
-                      className="object-cover"
-                      style={{ objectPosition: "center 25%" }}
-                      sizes="160px"
-                      priority
-                    />
-                    {/* Continuous Sheen Overlay */}
-                    <motion.span
-                      className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/35 to-transparent skew-x-[-20deg]"
-                      animate={reduceMotion ? undefined : { x: ["-100%", "200%"] }}
-                      transition={{ duration: 2.5, repeat: Infinity, ease: "linear" }}
-                    />
-                  </motion.span>
-                </div>
-                <div>
-                  <Framer3DWordFlip text="Products." delay={0.38} />
-                </div>
-              </h1>
+            <span className="mt-4 block">
+              <span className="nb-mark inline-block -rotate-2 px-[0.2em] py-[0.05em] shadow-[6px_6px_0_0_#0a0a0a]">
+                Developer
+              </span>
+            </span>
+          </h1>
 
-              {/* Typewriter role */}
-              <motion.div
-                className="mt-6 text-xl font-semibold sm:text-2xl"
-                initial={reduceMotion ? false : { opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.5 }}
-              >
-                <TypewriterGradient />
-              </motion.div>
+          {/* Typewriter + tagline */}
+          <motion.div
+            className="relative z-10 mt-10 text-lg font-bold sm:text-xl"
+            initial={reduceMotion ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4, delay: 0.55 }}
+          >
+            <TypewriterGradient />
+          </motion.div>
+          <p className="relative z-10 mt-3 max-w-2xl text-base font-medium leading-relaxed text-muted sm:text-lg">
+            {site.tagline}
+          </p>
 
-              {/* Description — Framer Blur Word Reveal */}
-              <div className="mt-5 max-w-xl text-base leading-relaxed sm:text-lg" style={{ color: "var(--muted)" }}>
-                <FramerBlurWordReveal text={site.tagline} delay={0.5} />
-              </div>
+          {/* CTAs */}
+          <motion.div
+            className="relative z-10 mt-9 flex w-full flex-row items-center justify-center gap-4 sm:w-auto"
+            {...rise(0.75)}
+          >
+            <a
+              href="#contact"
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="nb-btn group flex-1 whitespace-nowrap bg-ink px-5 py-3.5 text-sm text-white sm:flex-initial sm:px-9 sm:text-base"
+            >
+              Let&apos;s Talk
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="transition-transform duration-200 group-hover:translate-x-1">
+                <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </a>
+            <button
+              onClick={() => setResumeOpen(true)}
+              className="nb-btn flex-1 whitespace-nowrap bg-accent px-5 py-3.5 text-sm sm:flex-initial sm:px-9 sm:text-base"
+            >
+              View Resume
+            </button>
+          </motion.div>
 
-              {/* CTAs — Side-by-Side on mobile */}
-              <motion.div
-                className="mt-8 flex flex-row items-center gap-3 sm:gap-4 w-full sm:w-auto"
-                initial={reduceMotion ? false : { opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.75 }}
-              >
-                <motion.a
-                  href="#contact"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
-                  }}
-                  className="group relative overflow-hidden flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 sm:gap-2.5 rounded-lg px-4 py-3 sm:px-8 sm:py-3.5 text-xs sm:text-sm font-bold shadow-lg transition-all duration-300 whitespace-nowrap"
-                  style={{
-                    background: "var(--foreground)",
-                    color: "var(--background)",
-                  }}
-                  whileHover={reduceMotion ? undefined : { scale: 1.05, y: -2, boxShadow: "0 0 30px rgba(255,255,255,0.3)" }}
-                  whileTap={reduceMotion ? undefined : { scale: 0.95 }}
-                >
-                  {/* Dynamic Sheen Beam Sweep (Continuous) */}
-                  <motion.div
-                    className="pointer-events-none absolute inset-0 z-10 w-1/2 bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-[-20deg]"
-                    animate={reduceMotion ? undefined : { x: ["-100%", "300%"] }}
-                    transition={{
-                      duration: 1.5,
-                      repeat: Infinity,
-                      repeatDelay: 2.0,
-                      ease: "easeInOut",
-                    }}
-                    aria-hidden
-                  />
-                  <span className="relative z-10">Let&apos;s Talk</span>
-                  <svg
-                    width="14" height="14" viewBox="0 0 16 16" fill="none"
-                    className="relative z-10 transition-transform duration-300 group-hover:translate-x-1"
-                  >
-                    <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </motion.a>
-
-                <motion.button
-                  onClick={() => setResumeOpen(true)}
-                  className="group relative overflow-hidden flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 sm:gap-2 rounded-lg border px-4 py-3 sm:px-8 sm:py-3.5 text-xs sm:text-sm font-semibold transition-all duration-300 hover:border-white/40 hover:text-white whitespace-nowrap"
-                  style={{
-                    borderColor: "var(--border)",
-                    color: "var(--muted)",
-                    background: "rgba(255,255,255,0.03)",
-                  }}
-                  whileHover={reduceMotion ? undefined : { scale: 1.04, y: -2, background: "rgba(255,255,255,0.08)" }}
-                  whileTap={reduceMotion ? undefined : { scale: 0.95 }}
-                >
-                  {/* Dynamic Sheen Beam Sweep (Continuous) */}
-                  <motion.div
-                    className="pointer-events-none absolute inset-0 z-10 w-1/2 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg]"
-                    animate={reduceMotion ? undefined : { x: ["-100%", "300%"] }}
-                    transition={{
-                      duration: 1.5,
-                      repeat: Infinity,
-                      repeatDelay: 2.2,
-                      ease: "easeInOut",
-                    }}
-                    aria-hidden
-                  />
-                  <span className="relative z-10">View Resume</span>
-                </motion.button>
-              </motion.div>
-            </div>
-
-            {/* Right Column: Code Editor Mockup Terminal */}
-            <div className="flex-shrink-0 self-center lg:self-auto w-full lg:w-fit flex justify-center mt-8 lg:mt-0">
-              <HeroCodeTerminal />
-            </div>
-          </div>
+          {/* Drag hint */}
+          <p className="mt-8 hidden font-mono text-xs font-bold text-muted lg:block">
+            ✦ psst… try dragging the stickers ✦
+          </p>
         </div>
-
-        {/* ── Marquee services strip ── */}
-        <motion.div
-          initial={reduceMotion ? false : { opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.9 }}
-          className="mt-14"
-        >
-          <MarqueeServices />
-        </motion.div>
       </section>
 
       <ResumeModal open={resumeOpen} onClose={() => setResumeOpen(false)} />

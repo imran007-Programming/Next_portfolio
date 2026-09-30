@@ -132,45 +132,23 @@ export const projects: Project[] = [
     ],
   },
   {
-    title: "Quran Mazid",
-    slug: "quran-mazid",
-    description:
-      "A comprehensive Quran reader application rendering all 114 surahs and 6,236 ayahs with pristine Arabic typography. Supports multi-reciter audio playback with play, pause, and skip controls, flexible navigation by surah, juz, or page number, customisable Arabic font sizes and styles for comfortable reading, and a bookmark system to save and jump to any verse instantly. Built with React, TypeScript, and Vite for blazing-fast load times and a smooth reading experience.",
-    tech: ["React", "TypeScript", "Vite", "Node.js", "Audio API"],
-    image: "/quran_mazid/quranmazid-eta.vercel.app_.png",
-    scrollPreview: true,
-    liveUrl: "https://quranmazid-eta.vercel.app/",
-    repoUrl: "https://github.com/imran007-Programming/Holy_quran_mazid",
-    gallery: [
-      "/quran_mazid/quranmazid-eta.vercel.app_.png",
-    ],
-    details: {
-      role: "Frontend Developer",
-      year: "2025",
-      highlights: [
-        "Full Quran with all 114 surahs and 6,236 ayahs in Arabic text",
-        "Multi-reciter audio playback with play, pause, and skip controls",
-        "Browse by surah, juz, or page number for quick navigation",
-        "Customisable Arabic font size and style for comfortable reading",
-        "Bookmark any ayah and jump to any verse instantly",
-        "Fast load times with Vite and TypeScript for type-safe code",
-      ],
-    },
-    metrics: [
-      { value: "6,236", label: "Ayahs Rendered" },
-      { value: "114", label: "Surahs" },
-      { value: "10+", label: "Reciters" },
-    ],
-  },
-  {
     title: "Rise at Seven",
     slug: "rise-at-seven",
     description:
       "A pixel-perfect, high-fidelity clone of Rise at Seven — a global SEO and content marketing agency. Recreates their polished brand experience with 15+ animated hero sections and page transitions powered by Framer Motion, editorial card layouts showcasing featured client work, service offering pages, international office locations, award listings, and a blog section. Fully responsive across all devices with custom typography, smooth 60fps animations, and a 99 Lighthouse performance score.",
     tech: ["Next.js", "React", "Framer Motion", "Tailwind CSS", "Node.js"],
-    image: "/projects/rise-at-seven.png",
+    image: "/rise/rise_main.jpg",
     liveUrl: "https://rise-at-seven-olive.vercel.app/",
     repoUrl: "https://github.com/imran007-Programming/Rise_at_seven",
+    gallery: [
+      "/rise/rise_main.jpg",
+      "/rise/rise_clients.jpg",
+      "/rise/rise_featured_work.jpg",
+      "/rise/rise_services.jpg",
+      "/rise/rise_pioneers.jpg",
+      "/rise/rise_whats_new.jpg",
+      "/rise/rise_footer.jpg",
+    ],
     details: {
       role: "Frontend Developer",
       year: "2025",

@@ -1,8 +1,9 @@
 "use client";
 
 import { site } from "@/data/site";
-import { FramerBlurLetters } from "@/components/TextReveal";
-import { motion } from "framer-motion";
+
+const linkClass =
+  "w-fit text-xl font-bold tracking-tight text-white decoration-[3px] underline-offset-4 transition-colors hover:text-accent hover:underline sm:text-2xl";
 
 export function Footer() {
   const year = new Date().getFullYear();
@@ -12,36 +13,27 @@ export function Footer() {
   };
 
   return (
-    <footer
-      className="relative overflow-hidden border-t pt-16 pb-6 md:pt-24 backdrop-blur-2xl bg-gradient-to-b from-transparent via-sky-950/20 to-black/90"
-      style={{ borderColor: "var(--border)" }}
-    >
-      {/* Full footer glass ambient gradient glow */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,var(--accent-dim),transparent_70%)] pointer-events-none" />
-
+    <footer className="relative overflow-hidden border-t-[3px] border-ink bg-ink pb-6 pt-16 text-white md:pt-24">
       <div className="relative z-10 mx-auto max-w-7xl px-6 md:px-10">
-        {/* ── Columns grid (iboxlab style) ── */}
+        {/* ── Columns grid ── */}
         <div className="grid grid-cols-1 gap-12 sm:grid-cols-3 md:gap-16">
           {/* Contact column */}
           <div>
-            <p className="mb-4 text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--muted)" }}>
+            <p className="nb-tag mb-5 bg-accent px-2.5 py-1 font-mono text-xs uppercase tracking-widest shadow-[3px_3px_0_0_#fff]">
               Contact
             </p>
             <div className="flex flex-col gap-2">
-              <a
-                href={`mailto:${site.email}`}
-                className="text-xl font-bold tracking-tight text-foreground transition-colors hover:text-accent sm:text-2xl"
-              >
+              <a href={`mailto:${site.email}`} className={`${linkClass} break-all`}>
                 {site.email}
               </a>
-              <p className="text-lg font-semibold text-foreground/90 sm:text-xl">
+              <p className="text-lg font-semibold text-white/80 sm:text-xl">
                 {site.location}
               </p>
               <a
                 href={site.whatsapp}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm text-muted hover:text-foreground transition-colors mt-1"
+                className="mt-1 w-fit text-sm font-medium text-white/70 transition-colors hover:text-accent"
               >
                 {site.phone}
               </a>
@@ -50,32 +42,22 @@ export function Footer() {
 
           {/* Social column */}
           <div>
-            <p className="mb-4 text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--muted)" }}>
+            <p className="nb-tag mb-5 bg-nb-pink px-2.5 py-1 font-mono text-xs uppercase tracking-widest shadow-[3px_3px_0_0_#fff]">
               Social
             </p>
             <div className="flex flex-col gap-2">
-              <a
-                href={site.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xl font-bold tracking-tight text-foreground transition-colors hover:text-accent sm:text-2xl"
-              >
-                LinkedIn
+              <a href={site.linkedin} target="_blank" rel="noopener noreferrer" className={linkClass}>
+                LinkedIn ↗
               </a>
-              <a
-                href={site.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xl font-bold tracking-tight text-foreground transition-colors hover:text-accent sm:text-2xl"
-              >
-                GitHub
+              <a href={site.github} target="_blank" rel="noopener noreferrer" className={linkClass}>
+                GitHub ↗
               </a>
             </div>
           </div>
 
           {/* Navigation column */}
           <div>
-            <p className="mb-4 text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--muted)" }}>
+            <p className="nb-tag mb-5 bg-nb-blue px-2.5 py-1 font-mono text-xs uppercase tracking-widest shadow-[3px_3px_0_0_#fff]">
               Navigation
             </p>
             <div className="flex flex-col gap-2">
@@ -83,8 +65,7 @@ export function Footer() {
                 <button
                   key={id}
                   onClick={() => scrollTo(id)}
-                  className="text-left text-xl font-bold capitalize tracking-tight text-foreground transition-colors hover:text-accent sm:text-2xl"
-                  style={{ background: "none", border: "none" }}
+                  className={`${linkClass} text-left capitalize`}
                 >
                   {id}
                 </button>
@@ -94,31 +75,26 @@ export function Footer() {
         </div>
 
         {/* ── Sub-bar: Copyright & Back to top ── */}
-        <div className="mt-16 flex flex-wrap items-center justify-between gap-4 border-t pt-8" style={{ borderColor: "var(--border)" }}>
-          <p className="text-xs text-muted">
+        <div className="mt-16 flex flex-wrap items-center justify-between gap-4 border-t-[3px] border-white/20 pt-8">
+          <p className="text-xs font-semibold text-white/70">
             © {year} {site.name}. All rights reserved.
           </p>
 
           <button
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="text-xs font-semibold text-accent transition-opacity hover:opacity-80"
-            style={{ background: "none", border: "none" }}
+            className="rounded-lg border-2 border-white bg-accent px-3 py-1.5 text-xs font-bold uppercase text-ink shadow-[3px_3px_0_0_#fff] transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0_0_#fff] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
           >
-            Back to top
+            Back to top ↑
           </button>
         </div>
 
-        {/* ── GIANT Branding Text (Clean iBoxLab Style) ── */}
-        <div className="mt-12 overflow-hidden select-none pointer-events-none text-center px-4">
+        {/* ── Giant branding text ── */}
+        <div className="pointer-events-none mt-12 select-none overflow-hidden px-2 text-center">
           <h2
-            className="text-[clamp(3.8rem,16vw,14rem)] font-black uppercase leading-none tracking-[0.15em] select-none"
-            style={{ fontFamily: 'var(--font-unbounded)' }}
+            className="font-display text-[clamp(4rem,19vw,17rem)] uppercase leading-[0.9] text-accent"
+            style={{ textShadow: "6px 6px 0 #ffffff" }}
           >
-            <FramerBlurLetters 
-              text="Imran" 
-              delay={0.15} 
-              className="bg-gradient-to-b from-white via-zinc-400 to-zinc-800 bg-clip-text text-transparent"
-            />
+            Imran
           </h2>
         </div>
       </div>

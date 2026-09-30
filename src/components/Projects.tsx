@@ -1,209 +1,144 @@
 "use client";
 
-import { useRef } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { projects } from "@/data/projects";
 import type { Project } from "@/data/projects";
 import { SectionHeading } from "@/components/SectionHeading";
-import { FramerBlurWordReveal } from "@/components/TextReveal";
 
-const TECH_COLORS: Record<string, string> = {
-  "React": "#38bdf8", "Next.js": "#a3a3a3", "TypeScript": "#60a5fa",
-  "JavaScript": "#fbbf24", "Tailwind CSS": "#2dd4bf", "Vite": "var(--accent)",
-  "Framer Motion": "#f472b6", "Vercel": "#94a3b8", "CSS": "#818cf8",
-  "Audio API": "#34d399", "Node.js": "#86efac", "Express": "#c9d1d9",
-  "Prisma": "#a5b4fc", "PostgreSQL": "#93c5fd", "MongoDB": "#6ee7b7",
-  "Mongoose": "#fca5a5",
-};
-const FALLBACK = ["#fb923c", "#e879f9", "#4ade80", "#f87171", "#facc15"];
-function techColor(name: string, idx: number) {
-  return TECH_COLORS[name] ?? FALLBACK[idx % FALLBACK.length];
-}
+const PILL_COLORS = ["var(--nb-yellow)", "var(--nb-pink)", "var(--nb-blue)", "var(--nb-green)", "var(--nb-orange)", "var(--nb-purple)"];
 
 function ProjectRow({ project, index }: { project: Project; index: number }) {
-  const imgRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
   const isEven = index % 2 === 0;
 
   return (
-    <motion.article
-      className="group grid grid-cols-1 md:grid-cols-2 gap-0 overflow-hidden rounded-2xl border"
-      style={{ borderColor: "var(--border)", background: "var(--surface)" }}
+    <motion.div
       initial={reduceMotion ? false : { opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.6, delay: index * 0.07, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ type: "spring", stiffness: 220, damping: 24, delay: index * 0.05 }}
     >
-      {/* Image side */}
-      <div
-        ref={imgRef}
-        className={`relative overflow-hidden bg-[#0d0d0d] ${isEven ? "md:order-1" : "md:order-2"}`}
-        style={{ minHeight: "320px" }}
-      >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={project.image}
-          alt={project.title}
-          className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
-        />
-        {/* Overlay gradient */}
+      <article className="nb-card nb-hover group grid grid-cols-1 overflow-hidden md:grid-cols-2">
+        {/* Image side */}
         <div
-          className="absolute inset-0"
-          style={{
-            background: isEven
-              ? "linear-gradient(to right, transparent 60%, var(--surface))"
-              : "linear-gradient(to left, transparent 60%, var(--surface))",
-          }}
-        />
-        {/* Index badge */}
-        <div className="absolute top-4 left-4">
-          <span
-            className="font-mono text-xs font-bold px-2.5 py-1 rounded-lg backdrop-blur-md"
-            style={{
-              background: "rgba(0,0,0,0.6)",
-              border: "1px solid var(--border)",
-              color: "var(--accent)",
-            }}
-          >
-            {String(index + 1).padStart(2, "0")}
-          </span>
-        </div>
-        {index === 0 && (
-          <div className="absolute top-4 right-4">
-            <span
-              className="text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-lg backdrop-blur-md"
-              style={{
-                background: "var(--accent-dim)",
-                border: "1px solid var(--accent)",
-                color: "var(--accent)",
-              }}
-            >
-              Featured
+          className={`relative overflow-hidden border-b-[3px] border-ink bg-surface-2 md:border-b-0 ${
+            isEven ? "md:order-1 md:border-r-[3px]" : "md:order-2 md:border-l-[3px]"
+          }`}
+          style={{ minHeight: "320px" }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={project.image}
+            alt={project.title}
+            className="absolute inset-0 h-full w-full object-cover object-top transition-transform duration-500 ease-out group-hover:scale-105"
+          />
+          {/* Index badge */}
+          <div className="absolute left-4 top-4">
+            <span className="nb-tag bg-accent px-2.5 py-1 font-mono text-sm">
+              #{String(index + 1).padStart(2, "0")}
             </span>
           </div>
-        )}
-      </div>
+          {index === 0 && (
+            <div className="absolute right-4 top-4">
+              <span className="nb-tag rotate-3 bg-nb-pink px-2.5 py-1 text-[11px] uppercase tracking-widest">
+                ★ Featured
+              </span>
+            </div>
+          )}
+        </div>
 
-      {/* Content side */}
-      <div
-        className={`flex flex-col justify-center p-8 md:p-10 ${isEven ? "md:order-2" : "md:order-1"}`}
-      >
-        {/* Title */}
-        <h3
-          className="text-2xl font-bold tracking-tight transition-colors duration-200 group-hover:text-accent md:text-3xl"
-          style={{ color: "var(--foreground)" }}
-        >
-          {project.title}
-        </h3>
+        {/* Content side */}
+        <div className={`flex flex-col justify-center p-7 md:p-9 ${isEven ? "md:order-2" : "md:order-1"}`}>
+          {/* Title */}
+          <h3 className="font-display text-2xl uppercase leading-tight md:text-3xl">
+            {project.title}
+          </h3>
 
-        {/* Description */}
-        <p
-          className="mt-3 text-sm leading-relaxed line-clamp-3"
-          style={{ color: "var(--muted)" }}
-        >
-          {project.description}
-        </p>
+          {/* Description */}
+          <p className="mt-3 line-clamp-3 text-sm font-medium leading-relaxed text-muted">
+            {project.description}
+          </p>
 
-        {/* Metrics */}
-        {project.metrics && project.metrics.length > 0 && (
-          <div className="mt-5 flex flex-wrap gap-3">
-            {project.metrics.map((m) => (
-              <div key={m.label} className="flex flex-col">
-                <span
-                  className="text-lg font-bold leading-none"
-                  style={{ color: "var(--accent)" }}
-                >
-                  {m.value}
-                </span>
-                <span className="text-[10px] mt-0.5" style={{ color: "var(--muted)" }}>
-                  {m.label}
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
+          {/* Metrics */}
+          {project.metrics && project.metrics.length > 0 && (
+            <div className="mt-5 flex flex-wrap gap-3">
+              {project.metrics.map((m) => (
+                <div key={m.label} className="rounded-lg border-2 border-ink bg-surface-2 px-3 py-1.5">
+                  <span className="font-display block text-lg leading-none">{m.value}</span>
+                  <span className="mt-0.5 block text-[10px] font-bold uppercase">{m.label}</span>
+                </div>
+              ))}
+            </div>
+          )}
 
-        {/* Divider */}
-        <div className="my-5 h-px" style={{ background: "var(--border)" }} />
+          {/* Divider */}
+          <div className="my-5 h-[3px] bg-ink" />
 
-        {/* Tech pills */}
-        <div className="flex flex-wrap gap-1.5">
-          {project.tech.map((t, ti) => {
-            const c = techColor(t, ti);
-            return (
+          {/* Tech pills */}
+          <div className="flex flex-wrap gap-2">
+            {project.tech.map((t, ti) => (
               <span
                 key={t}
-                className="rounded-lg px-2.5 py-0.5 text-[10px] font-semibold"
-                style={{
-                  background: `${c}18`,
-                  border: `1px solid ${c}35`,
-                  color: c,
-                }}
+                className="rounded-md border-2 border-ink px-2.5 py-0.5 text-[11px] font-bold"
+                style={{ background: PILL_COLORS[ti % PILL_COLORS.length] }}
               >
                 {t}
               </span>
-            );
-          })}
-        </div>
+            ))}
+          </div>
 
-        {/* Actions */}
-        <div className="mt-6 flex flex-wrap items-center gap-3">
-          <a
-            href={project.liveUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-lg px-5 py-2 text-xs font-bold transition-all duration-300 hover:scale-105"
-            style={{ background: "var(--foreground)", color: "var(--background)" }}
-          >
-            Live site ↗
-          </a>
-          {project.repoUrl && (
+          {/* Actions */}
+          <div className="mt-7 flex flex-wrap items-center gap-3">
             <a
-              href={project.repoUrl}
+              href={project.liveUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-lg border px-5 py-2 text-xs font-medium transition-all duration-300 hover:border-white/20 hover:text-white"
-              style={{ borderColor: "var(--border)", color: "var(--muted)" }}
+              className="nb-btn bg-accent px-5 py-2 text-xs uppercase tracking-wide"
             >
-              GitHub
+              Live site ↗
             </a>
-          )}
-          <Link
-            href={`/projects/${project.slug}`}
-            className="group/link ml-auto flex items-center gap-1.5 rounded-lg border px-5 py-2 text-xs font-semibold transition-all duration-300 hover:border-accent/40 hover:text-accent"
-            style={{ borderColor: "var(--border)", color: "var(--muted)" }}
-          >
-            Details
-            <svg
-              width="11" height="11" viewBox="0 0 16 16" fill="none"
-              className="transition-transform duration-200 group-hover/link:translate-x-1"
+            {project.repoUrl && (
+              <a
+                href={project.repoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="nb-btn bg-surface px-5 py-2 text-xs uppercase tracking-wide"
+              >
+                GitHub
+              </a>
+            )}
+            <Link
+              href={`/projects/${project.slug}`}
+              className="nb-btn group/link ml-auto bg-ink px-5 py-2 text-xs uppercase tracking-wide text-white"
             >
-              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </Link>
+              Details
+              <svg
+                width="12" height="12" viewBox="0 0 16 16" fill="none"
+                className="transition-transform duration-200 group-hover/link:translate-x-1"
+              >
+                <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </Link>
+          </div>
         </div>
-      </div>
-    </motion.article>
+      </article>
+    </motion.div>
   );
 }
 
 export function Projects() {
   return (
-    <section
-      id="projects"
-      className="border-t py-24 md:py-32"
-      style={{ borderColor: "var(--border)" }}
-    >
+    <section id="projects" className="py-24 md:py-32">
       <div className="mx-auto max-w-7xl px-6 md:px-10">
-        <div className="mb-16 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div className="mb-14 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <SectionHeading eyebrow="My Work" title="{Projects} I've shipped" />
-          <div className="max-w-sm text-sm leading-relaxed" style={{ color: "var(--muted)" }}>
-            <FramerBlurWordReveal text="Live apps across travel, e-commerce, logistics, and education — each deployed and ready to explore." delay={0.25} />
-          </div>
+          <p className="max-w-sm text-sm font-medium leading-relaxed text-muted">
+            Live apps across travel, e-commerce, logistics, and education — each deployed and ready to explore.
+          </p>
         </div>
 
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-10">
           {projects.map((project, i) => (
             <ProjectRow key={project.slug} project={project} index={i} />
           ))}

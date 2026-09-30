@@ -10,7 +10,7 @@ export function ScrollProgress() {
 
   return (
     <motion.div
-      className="fixed top-0 left-0 right-0 z-[200] h-[2px] origin-left"
+      className="fixed left-0 right-0 top-0 z-200 h-1.5 origin-left border-b-2 border-ink"
       style={{
         scaleX: scrollYProgress,
         background: "var(--accent)",

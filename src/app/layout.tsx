@@ -1,23 +1,27 @@
 import type { Metadata } from "next";
-import { Poppins, Unbounded } from "next/font/google";
+import { Space_Grotesk, Archivo_Black, Space_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import { ColorProvider } from "@/context/ColorContext";
 import { BackToTop } from "@/components/BackToTop";
 import { VisitAlert } from "@/components/VisitAlert";
 import { GradientBackground } from "@/components/GradientBackground";
 import "./globals.css";
 
-const poppins = Poppins({
-  variable: "--font-poppins",
+const grotesk = Space_Grotesk({
+  variable: "--font-grotesk",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
 });
 
-const unbounded = Unbounded({
-  variable: "--font-unbounded",
+const archivo = Archivo_Black({
+  variable: "--font-archivo",
   subsets: ["latin"],
-  weight: ["400", "700", "800", "900"],
+  weight: "400",
+});
+
+const spaceMono = Space_Mono({
+  variable: "--font-spacemono",
+  subsets: ["latin"],
+  weight: ["400", "700"],
 });
 
 export const metadata: Metadata = {
@@ -38,19 +42,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${poppins.variable} ${unbounded.variable} dark`} suppressHydrationWarning>
-      <body className="min-h-screen antialiased" style={{ background: "#080808" }}>
+    <html lang="en" className={`${grotesk.variable} ${archivo.variable} ${spaceMono.variable}`} suppressHydrationWarning>
+      <body className="min-h-screen antialiased">
         <GradientBackground />
-        <ColorProvider>
-          <ThemeProvider>
-            {children}
-            <BackToTop />
-            <VisitAlert />
-          </ThemeProvider>
-        </ColorProvider>
+        <ThemeProvider>
+          {children}
+          <BackToTop />
+          <VisitAlert />
+        </ThemeProvider>
         <Analytics />
       </body>
     </html>
   );
 }
-

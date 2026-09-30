@@ -31,41 +31,42 @@ export function FaqAccordion() {
   const reduceMotion = useReducedMotion();
 
   return (
-    <div className="divide-y" style={{ borderColor: "var(--border)" }}>
+    <div className="flex flex-col gap-4">
       {faqs.map((faq, i) => {
         const isOpen = openIdx === i;
         return (
-          <div key={i}>
+          <div
+            key={i}
+            className={`overflow-hidden rounded-xl border-[3px] border-ink bg-surface transition-shadow duration-150 ${
+              isOpen ? "shadow-[6px_6px_0_0_#0a0a0a]" : "shadow-[3px_3px_0_0_#0a0a0a]"
+            }`}
+          >
             <button
-              className="flex w-full items-center justify-between py-6 text-left"
+              className={`flex w-full items-center justify-between gap-4 px-5 py-5 text-left transition-colors duration-150 ${
+                isOpen ? "bg-accent" : "hover:bg-surface-2"
+              }`}
               onClick={() => setOpenIdx(isOpen ? null : i)}
               aria-expanded={isOpen}
             >
-              <span
-                className="pr-6 text-base font-semibold leading-snug transition-colors duration-200"
-                style={{ color: isOpen ? "var(--foreground)" : "var(--muted)" }}
-              >
+              <span className="text-base font-bold leading-snug">
                 {faq.q}
               </span>
               <div
-                className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg border transition-all duration-300"
-                style={{
-                  borderColor: isOpen ? "var(--accent)" : "var(--border)",
-                  background: isOpen ? "var(--accent)" : "transparent",
-                  color: isOpen ? "#080808" : "var(--muted)",
-                }}
+                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border-[3px] border-ink ${
+                  isOpen ? "bg-ink text-white" : "bg-surface"
+                }`}
               >
                 <svg
-                  width="11"
-                  height="11"
+                  width="12"
+                  height="12"
                   viewBox="0 0 12 12"
                   fill="none"
                   style={{
                     transform: isOpen ? "rotate(45deg)" : "rotate(0deg)",
-                    transition: "transform 0.3s cubic-bezier(0.22,1,0.36,1)",
+                    transition: "transform 0.25s cubic-bezier(0.22,1,0.36,1)",
                   }}
                 >
-                  <path d="M6 1v10M1 6h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                  <path d="M6 1v10M1 6h10" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
                 </svg>
               </div>
             </button>
@@ -77,13 +78,10 @@ export function FaqAccordion() {
                   initial={reduceMotion ? false : { height: 0, opacity: 0 }}
                   animate={{ height: "auto", opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                  transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                   style={{ overflow: "hidden" }}
                 >
-                  <p
-                    className="pb-6 text-sm leading-relaxed"
-                    style={{ color: "var(--muted)" }}
-                  >
+                  <p className="border-t-[3px] border-ink px-5 py-5 text-sm font-medium leading-relaxed text-muted">
                     {faq.a}
                   </p>
                 </motion.div>

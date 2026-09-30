@@ -5,14 +5,12 @@ import { motion, useReducedMotion } from "framer-motion";
 import { gsap } from "gsap";
 import { site } from "@/data/site";
 import { GitHubActivity } from "@/components/GitHubActivity";
-import { SectionHeading } from "@/components/SectionHeading";
-import { Framer3DWordFlip, FramerBlurWordReveal, FramerBlurLetters } from "@/components/TextReveal";
 
 const stats = [
-  { end: 3,   suffix: "+", label: "Years Experience" },
-  { end: 10,  suffix: "+", label: "Projects Shipped" },
-  { end: 20,  suffix: "+", label: "Technologies"     },
-  { end: 100, suffix: "%", label: "Remote Ready"     },
+  { end: 1,   suffix: "+", label: "Year Experience", bg: "var(--nb-pink)",   tilt: "-rotate-1" },
+  { end: 10,  suffix: "+", label: "Projects Shipped", bg: "var(--nb-blue)",   tilt: "rotate-1" },
+  { end: 20,  suffix: "+", label: "Technologies",     bg: "var(--nb-green)",  tilt: "rotate-1" },
+  { end: 100, suffix: "%", label: "Remote Ready",     bg: "var(--nb-orange)", tilt: "-rotate-1" },
 ];
 
 export function About() {
@@ -45,57 +43,35 @@ export function About() {
   }, [reduceMotion]);
 
   return (
-    <section
-      id="about"
-      className="border-t py-24 md:py-32"
-      style={{ borderColor: "var(--border)" }}
-    >
+    <section id="about" className="py-24 md:py-32">
       <div className="mx-auto max-w-7xl px-6 md:px-10">
 
         {/* ── Two-column layout ── */}
-        <div className="grid gap-16 lg:grid-cols-2 lg:gap-24">
+        <div className="grid gap-16 lg:grid-cols-2 lg:gap-20">
 
           {/* Left — big editorial text */}
           <div>
-            <h2
-              className="text-[clamp(1.6rem,3.4vw,2.5rem)] font-extrabold uppercase leading-tight tracking-[0.05em] select-none mb-6"
-              style={{ fontFamily: 'var(--font-unbounded)' }}
-            >
-              <div>
-                <FramerBlurLetters 
-                  text="I turn complex" 
-                  delay={0.1}
-                  className="text-white"
-                />
+            <p className="nb-tag mb-6 -rotate-1 bg-surface px-3 py-1 font-mono text-xs uppercase tracking-[0.2em]">
+              <span className="h-2 w-2 rounded-full bg-ink" />
+              About Me
+            </p>
+
+            <h2 className="font-display mb-6 text-[clamp(1.8rem,3.6vw,2.9rem)] uppercase leading-[1.1] select-none">
+              <div>I turn complex</div>
+              <div className="mt-1">ideas into</div>
+              <div className="my-3">
+                <span className="nb-mark rotate-[-1.5deg] px-3 py-1">production-ready</span>
               </div>
-              <div className="mt-1">
-                <FramerBlurLetters 
-                  text="ideas into" 
-                  delay={0.2}
-                  className="text-white"
-                />
-              </div>
-              <div className="mt-1">
-                <FramerBlurLetters 
-                  text="production-ready" 
-                  delay={0.3}
-                  className="text-accent"
-                />
-              </div>
-              <div className="mt-1">
-                <FramerBlurLetters 
-                  text="software." 
-                  delay={0.4}
-                  className="text-white"
-                />
-              </div>
+              <div>software.</div>
             </h2>
 
-            <div className="mt-6 text-base leading-relaxed" style={{ color: "var(--muted)" }}>
-              <FramerBlurWordReveal text={`I'm ${site.name}, a ${site.role.toLowerCase()} who cares about clean architecture, intuitive interfaces, and shipping work that scales — whether it's a customer-facing app, an internal dashboard, or APIs powering multiple clients.`} delay={0.2} />
-              <div className="mt-4">
-                <FramerBlurWordReveal text="When I'm not coding, I'm exploring new tools, contributing to open source, or deep in side projects that push my skills further." delay={0.4} />
-              </div>
+            <div className="mt-6 text-base font-medium leading-relaxed text-muted">
+              <p>
+                I&apos;m {site.name}, a {site.role.toLowerCase()} who cares about clean architecture, intuitive interfaces, and shipping work that scales — whether it&apos;s a customer-facing app, an internal dashboard, or APIs powering multiple clients.
+              </p>
+              <p className="mt-4">
+                When I&apos;m not coding, I&apos;m exploring new tools, contributing to open source, or deep in side projects that push my skills further.
+              </p>
             </div>
 
             {/* Social links */}
@@ -104,7 +80,7 @@ export function About() {
               initial={reduceMotion ? false : { opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.3 }}
+              transition={{ duration: 0.4, delay: 0.3 }}
             >
               {[
                 { label: "GitHub", href: site.github },
@@ -116,11 +92,7 @@ export function About() {
                   href={link.href}
                   target={link.href.startsWith("http") ? "_blank" : undefined}
                   rel="noopener noreferrer"
-                  className="rounded-full border px-5 py-2 text-xs font-medium transition-all duration-300 hover:border-white/20 hover:text-white"
-                  style={{
-                    borderColor: "var(--border)",
-                    color: "var(--muted)",
-                  }}
+                  className="nb-btn bg-surface px-5 py-2 text-sm hover:bg-accent"
                 >
                   {link.label} ↗
                 </a>
@@ -129,76 +101,54 @@ export function About() {
           </div>
 
           {/* Right — stats */}
-          <div>
+          <div className="lg:pt-14">
             {/* Open to work badge */}
             <motion.div
-              className="mb-8 inline-flex items-center gap-3 rounded-full border px-5 py-2.5"
-              style={{
-                borderColor: "rgba(45,212,191,0.3)",
-                background: "rgba(45,212,191,0.05)",
-              }}
+              className="nb-tag mb-8 rotate-1 bg-nb-green px-4 py-2"
               initial={reduceMotion ? false : { opacity: 0, x: 16 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
               <motion.span
-                className="h-2 w-2 rounded-full"
-                style={{ background: "var(--accent)" }}
-                animate={reduceMotion ? undefined : { scale: [1, 1.5, 1], opacity: [1, 0.4, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
+                className="h-2.5 w-2.5 rounded-full border-2 border-ink bg-surface"
+                animate={reduceMotion ? undefined : { scale: [1, 1.4, 1] }}
+                transition={{ duration: 1.6, repeat: Infinity }}
               />
-              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--accent)" }}>
+              <span className="text-xs font-extrabold uppercase tracking-widest">
                 Open to Work
               </span>
-              <span className="text-xs" style={{ color: "var(--muted)" }}>
+              <span className="text-xs font-semibold">
                 · Remote / Freelance
               </span>
             </motion.div>
 
             {/* Stats grid */}
-            <div
-              ref={statsRef}
-              className="grid grid-cols-2 gap-4"
-            >
+            <div ref={statsRef} className="grid grid-cols-2 gap-5">
               {stats.map((s, i) => (
                 <motion.div
                   key={s.label}
-                  className="rounded-2xl border p-5"
-                  style={{
-                    borderColor: "var(--border)",
-                    background: "var(--surface)",
-                  }}
-                  initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+                  initial={reduceMotion ? false : { opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: i * 0.08 }}
-                  whileHover={reduceMotion ? undefined : {
-                    borderColor: "rgba(45,212,191,0.35)",
-                    y: -2,
-                  }}
+                  transition={{ type: "spring", stiffness: 280, damping: 20, delay: i * 0.08 }}
                 >
+                  <div className={`nb-card nb-hover h-full p-5 sm:p-6 ${s.tilt}`} style={{ background: s.bg }}>
                   <div className="flex items-end gap-0.5">
                     <span
-                      className="text-4xl font-bold tabular-nums"
+                      className="font-display text-5xl tabular-nums"
                       data-count={s.end}
-                      style={{ color: "var(--foreground)" }}
                     >
                       0
                     </span>
-                    <span
-                      className="mb-1 text-xl font-bold"
-                      style={{ color: "var(--accent)" }}
-                    >
+                    <span className="font-display mb-1 text-2xl">
                       {s.suffix}
                     </span>
                   </div>
-                  <p
-                    className="mt-1 text-xs font-medium uppercase tracking-wide"
-                    style={{ color: "var(--muted)" }}
-                  >
+                  <p className="mt-2 text-xs font-extrabold uppercase tracking-wide">
                     {s.label}
                   </p>
+                  </div>
                 </motion.div>
               ))}
             </div>

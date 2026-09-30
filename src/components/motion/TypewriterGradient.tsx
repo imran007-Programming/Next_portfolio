@@ -47,11 +47,12 @@ export function TypewriterGradient() {
 
   return (
     <span className="inline-block min-h-[1.25em]">
-      <span className="bg-gradient-to-r from-accent via-cyan-300 to-violet-400 bg-clip-text text-transparent">
+      <span className="text-ink">&gt; </span>
+      <span className="bg-[linear-gradient(transparent_55%,var(--accent)_55%)] px-0.5 text-ink">
         {text}
       </span>
       <span
-        className="ml-0.5 inline-block w-[3px] animate-pulse bg-accent align-middle"
+        className="ml-0.5 inline-block w-2.5 animate-pulse bg-ink align-middle"
         style={{ height: "0.9em" }}
         aria-hidden
       />

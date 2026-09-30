@@ -18,7 +18,7 @@ function TypingDots() {
       {[0, 1, 2].map((i) => (
         <motion.span
           key={i}
-          className="h-1.5 w-1.5 rounded-full bg-muted"
+          className="h-2 w-2 rounded-full bg-ink"
           animate={{ opacity: [0.3, 1, 0.3] }}
           transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.2 }}
         />
@@ -107,29 +107,28 @@ export function ChatBot() {
       <AnimatePresence>
         {open && (
           <motion.div
-            className="fixed bottom-24 right-3 z-50 flex h-[500px] w-[340px] flex-col overflow-hidden rounded-2xl border border-black/10 bg-surface shadow-[0_20px_60px_rgba(0,0,0,0.25)] dark:border-white/10 sm:right-6 sm:w-95"
-            initial={{ opacity: 0, y: 16, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 16, scale: 0.96 }}
-            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+            className="fixed bottom-24 right-3 z-50 flex h-[500px] w-[340px] flex-col overflow-hidden rounded-xl border-[3px] border-ink bg-surface shadow-[8px_8px_0_0_#0a0a0a] sm:right-6 sm:w-95"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 16 }}
+            transition={{ type: "spring", stiffness: 380, damping: 28 }}
           >
             {/* Header */}
-            <div className="flex shrink-0 items-center gap-3 border-b border-black/8 px-4 py-3 dark:border-white/8"
-              style={{ background: "linear-gradient(135deg, rgba(45,212,191,0.12) 0%, rgba(103,232,249,0.07) 100%)" }}>
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent/20">
+            <div className="flex shrink-0 items-center gap-3 border-b-[3px] border-ink bg-accent px-4 py-3">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border-2 border-ink bg-surface">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
-                  <path d="M12 3c-4.97 0-9 3.19-9 7 0 2.04 1.14 3.86 2.96 5.12l-.84 3.14 3.44-1.72c.96.27 1.97.46 3.06.46 4.97 0 9-3.19 9-7s-4.03-7-9-7z" fill="#2dd4bf" fillOpacity="0.9" />
+                  <path d="M12 3c-4.97 0-9 3.19-9 7 0 2.04 1.14 3.86 2.96 5.12l-.84 3.14 3.44-1.72c.96.27 1.97.46 3.06.46 4.97 0 9-3.19 9-7s-4.03-7-9-7z" fill="#0a0a0a" />
                 </svg>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-foreground">Portfolio Assistant</p>
-                <p className="text-[10px] text-accent/70">Ask about Imran&apos;s work &amp; skills</p>
+              <div className="min-w-0 flex-1">
+                <p className="font-display text-sm uppercase">Portfolio Assistant</p>
+                <p className="text-[11px] font-semibold">Ask about Imran&apos;s work &amp; skills</p>
               </div>
               <button
                 type="button"
                 onClick={() => setOpen(false)}
                 aria-label="Close chat"
-                className="flex h-7 w-7 items-center justify-center rounded-full text-muted transition-colors hover:bg-black/10 hover:text-foreground dark:hover:bg-white/10"
+                className="flex h-8 w-8 items-center justify-center rounded-lg border-2 border-ink bg-surface transition-colors hover:bg-ink hover:text-white"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
                   <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
@@ -138,21 +137,21 @@ export function ChatBot() {
             </div>
 
             {/* Messages */}
-            <div ref={scrollRef} className="flex flex-1 flex-col gap-3 overflow-y-auto p-4">
+            <div ref={scrollRef} className="flex flex-1 flex-col gap-3 overflow-y-auto bg-background p-4">
               {messages.map((msg, i) => (
                 <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
                   {msg.role === "assistant" && (
-                    <span className="mr-2 mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent/15 text-accent">
+                    <span className="mr-2 mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 border-ink bg-accent">
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
                         <path d="M12 3c-4.97 0-9 3.19-9 7 0 2.04 1.14 3.86 2.96 5.12l-.84 3.14 3.44-1.72c.96.27 1.97.46 3.06.46 4.97 0 9-3.19 9-7s-4.03-7-9-7z" />
                       </svg>
                     </span>
                   )}
                   <div
-                    className={`max-w-[78%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
+                    className={`max-w-[78%] rounded-xl border-2 border-ink px-3.5 py-2.5 text-sm font-medium leading-relaxed shadow-[2px_2px_0_0_#0a0a0a] ${
                       msg.role === "user"
-                        ? "rounded-br-sm bg-accent text-[#0b0f14]"
-                        : "rounded-bl-sm bg-surface-2 text-foreground"
+                        ? "rounded-br-sm bg-accent"
+                        : "rounded-bl-sm bg-surface"
                     }`}
                   >
                     {msg.role === "assistant" && !msg.content && loading && i === messages.length - 1
@@ -170,7 +169,7 @@ export function ChatBot() {
                       key={s}
                       type="button"
                       onClick={() => sendMessage(s)}
-                      className="rounded-xl border border-accent/20 bg-accent/6 px-3.5 py-2 text-left text-xs font-medium text-accent/80 transition-colors hover:border-accent/40 hover:bg-accent/12 hover:text-accent"
+                      className="rounded-lg border-2 border-ink bg-surface px-3.5 py-2 text-left text-xs font-bold transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-accent hover:shadow-[3px_3px_0_0_#0a0a0a]"
                     >
                       {s}
                     </button>
@@ -184,29 +183,29 @@ export function ChatBot() {
             {/* Input */}
             <form
               onSubmit={(e) => { e.preventDefault(); sendMessage(input); }}
-              className="shrink-0 border-t border-black/8 p-3 dark:border-white/8"
+              className="shrink-0 border-t-[3px] border-ink bg-surface p-3"
             >
-              <div className="flex items-center gap-2 rounded-xl border border-black/10 bg-surface-2 px-3 py-2 transition-colors focus-within:border-accent/40 dark:border-white/10">
+              <div className="flex items-center gap-2 rounded-lg border-2 border-ink bg-surface px-3 py-2 transition-shadow focus-within:shadow-[3px_3px_0_0_#0a0a0a]">
                 <input
                   ref={inputRef}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Ask anything…"
                   disabled={loading}
-                  className="flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted/50 disabled:opacity-60"
+                  className="flex-1 bg-transparent text-sm font-medium text-ink outline-none placeholder:text-muted disabled:opacity-60"
                 />
                 <button
                   type="submit"
                   disabled={loading || !input.trim()}
                   aria-label="Send"
-                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-accent text-[#0b0f14] transition-opacity disabled:opacity-40"
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border-2 border-ink bg-accent transition-opacity disabled:opacity-40"
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
                     <path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </button>
               </div>
-              <p className="mt-1.5 text-center text-[9px] text-muted/40">Powered by Groq · Llama 3.1</p>
+              <p className="mt-1.5 text-center text-[9px] font-semibold text-muted">Powered by Groq · Llama 3.1</p>
             </form>
           </motion.div>
         )}
@@ -217,9 +216,9 @@ export function ChatBot() {
         type="button"
         aria-label={open ? "Close chat" : "Open chat"}
         onClick={() => setOpen((v) => !v)}
-        className="fixed bottom-6 right-3 z-50 flex h-14 w-14 cursor-pointer items-center justify-center rounded-full bg-accent shadow-[0_4px_24px_rgba(45,212,191,0.45)] transition-shadow hover:shadow-[0_4px_32px_rgba(45,212,191,0.65)] sm:right-6"
-        whileHover={{ scale: 1.07 }}
-        whileTap={{ scale: 0.93 }}
+        className="fixed bottom-6 right-3 z-50 flex h-14 w-14 cursor-pointer items-center justify-center rounded-xl border-[3px] border-ink bg-accent shadow-[4px_4px_0_0_#0a0a0a] sm:right-6"
+        whileHover={{ x: -2, y: -2, boxShadow: "6px 6px 0 0 #0a0a0a" }}
+        whileTap={{ x: 3, y: 3, boxShadow: "0px 0px 0 0 #0a0a0a" }}
       >
         <AnimatePresence mode="wait" initial={false}>
           {open ? (
@@ -245,7 +244,7 @@ export function ChatBot() {
 
         {/* Unread dot */}
         {unread && !open && (
-          <span className="absolute right-0 top-0 h-3.5 w-3.5 rounded-full border-2 border-background bg-red-500" />
+          <span className="absolute -right-1.5 -top-1.5 h-4 w-4 rounded-full border-2 border-ink bg-nb-red" />
         )}
       </motion.button>
     </>

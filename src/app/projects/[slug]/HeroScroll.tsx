@@ -40,7 +40,7 @@ export function HeroScroll({ src, alt }: { src: string; alt: string }) {
   }, [controls, reducedMotion]);
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-black/8 bg-surface dark:border-white/8">
+    <div className="relative overflow-hidden bg-surface">
       <div ref={wrapRef} className="h-[68vh] overflow-hidden">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <motion.img
@@ -53,11 +53,8 @@ export function HeroScroll({ src, alt }: { src: string; alt: string }) {
         />
       </div>
 
-      {/* bottom fade */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-linear-to-t from-surface/80 to-transparent" />
-
       {/* scroll indicator */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 rounded-full border border-white/15 bg-black/50 px-4 py-1.5 text-[11px] font-medium text-white/60 backdrop-blur-sm">
+      <div className="nb-tag absolute bottom-4 left-1/2 -translate-x-1/2 bg-accent px-3 py-1 text-[11px]">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden>
           <path d="M12 5v14M5 12l7 7 7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>

@@ -1,29 +1,25 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
 
-/** Glow-on-hover live site button */
+/** Primary live-site button */
 export function LiveButton({ href }: { href: string }) {
   return (
-    <motion.a
+    <a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex items-center gap-2 rounded-full px-7 py-3 text-sm font-bold text-[#080808] transition-all duration-300"
-      style={{ background: "var(--accent)" }}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.96 }}
+      className="nb-btn group bg-accent px-7 py-3 text-sm uppercase tracking-wide"
     >
       <span>Live site</span>
-      <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-        <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" className="transition-transform duration-200 group-hover:translate-x-1">
+        <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
-    </motion.a>
+    </a>
   );
 }
 
-/** Next-project card — hover border glow */
+/** Next-project card */
 export function NextProjectCard({
   href,
   num,
@@ -34,41 +30,27 @@ export function NextProjectCard({
   title: string;
 }) {
   return (
-    <Link href={href} className="block mt-4">
-      <motion.div
-        className="group flex items-center justify-between rounded-2xl p-6 transition-all duration-300"
-        style={{
-          background: "rgba(255,255,255,0.03)",
-          border: "1px solid rgba(255,255,255,0.08)",
-        }}
-        whileHover={{
-          borderColor: "var(--accent)",
-          background: "var(--accent-dim)",
-          y: -2,
-        }}
-        transition={{ duration: 0.25 }}
-      >
-        <div>
-          <p className="text-xs font-mono font-bold uppercase tracking-widest" style={{ color: "var(--accent)" }}>
-            Project {num}
-          </p>
-          <p className="mt-1 text-xl font-bold text-foreground group-hover:text-accent transition-colors">
-            {title}
-          </p>
-        </div>
-        <div className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 group-hover:border-accent group-hover:bg-accent group-hover:text-[#080808] transition-all duration-300">
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            aria-hidden
-            className="transition-transform duration-300 group-hover:translate-x-0.5"
-          >
-            <path d="M5 12h14M14 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </div>
-      </motion.div>
+    <Link href={href} className="nb-card nb-hover group flex items-center justify-between gap-4 p-6 hover:bg-accent">
+      <div>
+        <p className="font-mono text-xs font-bold uppercase tracking-widest">
+          Next · Project {num}
+        </p>
+        <p className="font-display mt-1 text-2xl uppercase">
+          {title}
+        </p>
+      </div>
+      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border-[3px] border-ink bg-ink text-white transition-colors duration-150 group-hover:bg-surface group-hover:text-ink">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          aria-hidden
+          className="transition-transform duration-200 group-hover:translate-x-0.5"
+        >
+          <path d="M5 12h14M14 6l6 6-6 6" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </div>
     </Link>
   );
 }

@@ -5,22 +5,11 @@ import { motion, useReducedMotion } from "framer-motion";
 import { site } from "@/data/site";
 import { SectionHeading } from "@/components/SectionHeading";
 import { FaqAccordion } from "@/components/FaqAccordion";
-import { Framer3DWordFlip, FramerBlurWordReveal } from "@/components/TextReveal";
 
 type FormState = { name: string; email: string; message: string };
 const initialForm: FormState = { name: "", email: "", message: "" };
 
-const inputStyle = {
-  width: "100%",
-  background: "rgba(255,255,255,0.03)",
-  border: "1px solid var(--border)",
-  borderRadius: "0.75rem",
-  padding: "0.875rem 1rem",
-  color: "var(--foreground)",
-  fontSize: "0.875rem",
-  outline: "none",
-  transition: "border-color 0.2s ease, box-shadow 0.2s ease",
-};
+const labelClass = "mb-2 block text-xs font-extrabold uppercase tracking-widest";
 
 export function Contact() {
   const reduceMotion = useReducedMotion();
@@ -57,56 +46,44 @@ export function Contact() {
 
   return (
     <>
-      <section
-        id="contact"
-        className="border-t py-24 md:py-32"
-        style={{ borderColor: "var(--border)" }}
-      >
+      <section id="contact" className="py-24 md:py-32">
       <div className="mx-auto max-w-7xl px-6 md:px-10">
 
-        {/* ── Section label ── */}
-        <motion.p
-          className="mb-12 font-mono text-xs uppercase tracking-[0.25em]"
-          style={{ color: "var(--accent)" }}
-          initial={reduceMotion ? false : { opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-        >
-          Contact
-        </motion.p>
-
-        <div className="grid gap-16 lg:grid-cols-2 lg:gap-24">
+        <div className="grid gap-14 lg:grid-cols-2 lg:gap-20">
 
           {/* ── Left: Big CTA + info ── */}
           <div>
-            <h2 className="text-[clamp(2rem,4vw,3.5rem)] font-bold leading-tight tracking-tight" style={{ color: "var(--foreground)" }}>
-              <Framer3DWordFlip text="Let's build something" delay={0.1} />{" "}
-              <span style={{ color: "var(--accent)" }}>
-                <Framer3DWordFlip text="together." delay={0.3} />
-              </span>
+            <p className="nb-tag mb-6 -rotate-1 bg-surface px-3 py-1 font-mono text-xs uppercase tracking-[0.2em]">
+              <span className="h-2 w-2 rounded-full bg-ink" />
+              Contact
+            </p>
+
+            <h2 className="font-display text-[clamp(2rem,4.4vw,3.6rem)] uppercase leading-[1.08]">
+              Let&apos;s build something{" "}
+              <span className="nb-mark mt-2 rotate-[-1.5deg] px-3">together.</span>
             </h2>
 
-            <div className="mt-5 text-base leading-relaxed" style={{ color: "var(--muted)" }}>
-              <FramerBlurWordReveal text="Have a project in mind or looking for a developer? Drop a message and I'll get back to you within 24 hours." delay={0.2} />
-            </div>
+            <p className="mt-6 text-base font-medium leading-relaxed text-muted">
+              Have a project in mind or looking for a developer? Drop a message and I&apos;ll get back to you within 24 hours.
+            </p>
 
             {/* Contact info */}
             <motion.div
-              className="mt-10 flex flex-col gap-4"
+              className="nb-card mt-10 flex flex-col divide-y-[3px] divide-ink overflow-hidden"
               initial={reduceMotion ? false : { opacity: 0, y: 12 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.25 }}
+              transition={{ delay: 0.2 }}
             >
               {[
-                { label: "Email", value: site.email, href: `mailto:${site.email}` },
-                { label: "WhatsApp", value: site.phone, href: site.whatsapp },
-                { label: "Location", value: site.location, href: undefined },
+                { label: "Email", value: site.email, href: `mailto:${site.email}`, bg: "var(--nb-yellow)" },
+                { label: "WhatsApp", value: site.phone, href: site.whatsapp, bg: "var(--nb-green)" },
+                { label: "Location", value: site.location, href: undefined, bg: "var(--nb-blue)" },
               ].map((item) => (
-                <div key={item.label} className="flex items-center gap-4">
+                <div key={item.label} className="flex items-stretch">
                   <span
-                    className="w-20 text-xs font-bold uppercase tracking-widest"
-                    style={{ color: "var(--muted)" }}
+                    className="flex w-28 shrink-0 items-center border-r-[3px] border-ink px-4 py-3 text-[11px] font-extrabold uppercase tracking-widest"
+                    style={{ background: item.bg }}
                   >
                     {item.label}
                   </span>
@@ -115,13 +92,12 @@ export function Contact() {
                       href={item.href}
                       target={item.href.startsWith("http") ? "_blank" : undefined}
                       rel="noopener noreferrer"
-                      className="text-sm transition-colors duration-200 hover:text-white"
-                      style={{ color: "var(--foreground)" }}
+                      className="flex min-w-0 flex-1 items-center break-all px-4 py-3 text-sm font-bold underline-offset-4 hover:bg-surface-2 hover:underline"
                     >
                       {item.value}
                     </a>
                   ) : (
-                    <span className="text-sm" style={{ color: "var(--foreground)" }}>{item.value}</span>
+                    <span className="flex flex-1 items-center px-4 py-3 text-sm font-bold">{item.value}</span>
                   )}
                 </div>
               ))}
@@ -129,11 +105,11 @@ export function Contact() {
 
             {/* Socials */}
             <motion.div
-              className="mt-8 flex gap-3"
+              className="mt-7 flex gap-3"
               initial={reduceMotion ? false : { opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.35 }}
+              transition={{ delay: 0.3 }}
             >
               {[
                 { label: "GitHub", href: site.github },
@@ -144,8 +120,7 @@ export function Contact() {
                   href={s.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="rounded-lg border px-5 py-2 text-xs font-medium transition-all duration-300 hover:border-white/20 hover:text-white"
-                  style={{ borderColor: "var(--border)", color: "var(--muted)" }}
+                  className="nb-btn bg-surface px-5 py-2 text-sm hover:bg-accent"
                 >
                   {s.label} ↗
                 </a>
@@ -153,42 +128,39 @@ export function Contact() {
             </motion.div>
           </div>
 
-          {/* ── Right: Simple Clean Form ── */}
+          {/* ── Right: Form ── */}
           <motion.div
             initial={reduceMotion ? false : { opacity: 0, x: 24 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ type: "spring", stiffness: 220, damping: 24, delay: 0.1 }}
           >
             {submitted ? (
-              <div
-                className="flex flex-col items-center justify-center rounded-2xl border py-16 text-center"
-                style={{ borderColor: "var(--accent-dim)", background: "var(--accent-dim)" }}
-              >
-                <span className="mb-4 text-4xl">✅</span>
-                <h3 className="text-lg font-bold" style={{ color: "var(--foreground)" }}>
+              <div className="nb-card flex flex-col items-center justify-center bg-nb-green py-16 text-center">
+                <span className="mb-4 flex h-16 w-16 items-center justify-center rounded-full border-[3px] border-ink bg-surface text-3xl shadow-[3px_3px_0_0_#0a0a0a]">✓</span>
+                <h3 className="font-display text-xl uppercase">
                   Message sent!
                 </h3>
-                <p className="mt-2 text-sm" style={{ color: "var(--muted)" }}>
+                <p className="mt-2 text-sm font-semibold">
                   I&apos;ll get back to you within 24 hours.
                 </p>
                 <button
                   onClick={() => setSubmitted(false)}
-                  className="mt-6 rounded-lg border px-5 py-2 text-xs font-medium"
-                  style={{ borderColor: "var(--border)", color: "var(--muted)" }}
+                  className="nb-btn mt-6 bg-surface px-5 py-2 text-xs uppercase"
                 >
                   Send another
                 </button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                <div className="grid gap-4 sm:grid-cols-2">
+              <form onSubmit={handleSubmit} className="nb-card flex flex-col gap-5 bg-surface p-6 sm:p-8">
+                <div className="-mx-6 -mt-6 mb-1 flex items-center justify-between border-b-[3px] border-ink bg-accent px-6 py-3 sm:-mx-8 sm:-mt-8 sm:px-8">
+                  <span className="font-display text-sm uppercase">Send a message</span>
+                  <span className="font-mono text-xs font-bold">✉ reply &lt; 24h</span>
+                </div>
+
+                <div className="grid gap-5 sm:grid-cols-2">
                   <div>
-                    <label
-                      htmlFor="contact-name"
-                      className="mb-1.5 block text-xs font-medium uppercase tracking-widest"
-                      style={{ color: "var(--muted)" }}
-                    >
+                    <label htmlFor="contact-name" className={labelClass}>
                       Name
                     </label>
                     <input
@@ -198,17 +170,11 @@ export function Contact() {
                       value={form.name}
                       onChange={(e) => update("name", e.target.value)}
                       required
-                      style={inputStyle}
-                      onFocus={(e) => { (e.target as HTMLElement).style.borderColor = "var(--accent)"; }}
-                      onBlur={(e) => { (e.target as HTMLElement).style.borderColor = "var(--border)"; }}
+                      className="nb-input"
                     />
                   </div>
                   <div>
-                    <label
-                      htmlFor="contact-email"
-                      className="mb-1.5 block text-xs font-medium uppercase tracking-widest"
-                      style={{ color: "var(--muted)" }}
-                    >
+                    <label htmlFor="contact-email" className={labelClass}>
                       Email
                     </label>
                     <input
@@ -218,19 +184,13 @@ export function Contact() {
                       value={form.email}
                       onChange={(e) => update("email", e.target.value)}
                       required
-                      style={inputStyle}
-                      onFocus={(e) => { (e.target as HTMLElement).style.borderColor = "var(--accent)"; }}
-                      onBlur={(e) => { (e.target as HTMLElement).style.borderColor = "var(--border)"; }}
+                      className="nb-input"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label
-                    htmlFor="contact-message"
-                    className="mb-1.5 block text-xs font-medium uppercase tracking-widest"
-                    style={{ color: "var(--muted)" }}
-                  >
+                  <label htmlFor="contact-message" className={labelClass}>
                     Message
                   </label>
                   <textarea
@@ -240,35 +200,24 @@ export function Contact() {
                     value={form.message}
                     onChange={(e) => update("message", e.target.value)}
                     required
-                    style={{ ...inputStyle, resize: "vertical" }}
-                    onFocus={(e) => { (e.target as HTMLElement).style.borderColor = "var(--accent)"; }}
-                    onBlur={(e) => { (e.target as HTMLElement).style.borderColor = "var(--border)"; }}
+                    className="nb-input resize-y"
                   />
                 </div>
 
                 {error && (
-                  <p className="text-sm" style={{ color: "#f87171" }}>{error}</p>
+                  <p className="rounded-lg border-2 border-ink bg-nb-red px-3 py-2 text-sm font-bold">{error}</p>
                 )}
 
-                <motion.button
+                <button
                   type="submit"
                   disabled={loading}
-                  className="group relative overflow-hidden mt-3 flex items-center justify-center gap-2 rounded-2xl py-4 text-sm font-bold text-white transition-all duration-300 disabled:opacity-50"
-                  style={{ background: "var(--accent)", boxShadow: "0 0 30px var(--accent-dim)" }}
-                  whileHover={loading ? undefined : { scale: 1.02, y: -2 }}
-                  whileTap={loading ? undefined : { scale: 0.96 }}
+                  className="nb-btn group mt-2 bg-ink py-4 text-base uppercase tracking-wide text-white"
                 >
-                  {/* Continuous Sheen Beam Sweep */}
-                  <motion.span
-                    className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/35 to-transparent skew-x-[-20deg]"
-                    animate={{ x: ["-100%", "200%"] }}
-                    transition={{ duration: 2.8, repeat: Infinity, ease: "linear" }}
-                  />
-                  <span className="relative z-10">{loading ? "Sending Message..." : "Send Message"}</span>
+                  <span>{loading ? "Sending Message..." : "Send Message"}</span>
                   {!loading && (
-                    <span className="relative z-10 text-base transition-transform duration-300 group-hover:translate-x-1">→</span>
+                    <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
                   )}
-                </motion.button>
+                </button>
               </form>
             )}
           </motion.div>
@@ -278,29 +227,9 @@ export function Contact() {
     </section>
 
     {/* ── FAQ Section ── */}
-    <section
-      id="faq"
-      className="relative border-t py-24 md:py-32"
-      style={{ borderColor: "var(--border)" }}
-    >
-      <div className="mx-auto max-w-7xl px-6 md:px-10">
-        {/* Animated Ambient Glow Overlay */}
-        <motion.div
-          className="absolute left-1/4 top-10 -z-10 h-80 w-80 rounded-full bg-accent/10 blur-[130px] pointer-events-none"
-          initial={{ opacity: 0, scale: 0.8 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1.5, ease: "easeOut" }}
-        />
-        <motion.div
-          className="absolute right-1/4 bottom-10 -z-10 h-80 w-80 rounded-full bg-sky-600/10 blur-[130px] pointer-events-none"
-          initial={{ opacity: 0, scale: 0.8 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1.8, ease: "easeOut", delay: 0.2 }}
-        />
-
-        <SectionHeading eyebrow="FAQs" title="Your Questions, {Answered}" className="mb-10" />
+    <section id="faq" className="py-24 md:py-32">
+      <div className="mx-auto max-w-4xl px-6 md:px-10">
+        <SectionHeading eyebrow="FAQs" title="Your Questions, {Answered}" className="mb-12" />
         <FaqAccordion />
       </div>
     </section>

@@ -2,10 +2,11 @@
 
 import { Terminal } from "@/components/ui/terminal";
 
-export function HeroCodeTerminal() {
+export function HeroCodeTerminal({ className = "" }: { className?: string }) {
   return (
-    <div className="w-full sm:w-[480px] lg:w-[420px] xl:w-[480px] shrink-0">
+    <div className={`w-full ${className}`}>
       <Terminal
+        className="h-full"
         commands={["whoami", "cat developer.config.json"]}
         outputs={{
           0: ["➜ Imran Hasan — Full Stack Software Engineer"],

@@ -24,22 +24,17 @@ export function BackToTop() {
     <AnimatePresence>
       {visible && (
         <motion.div
-          className="fixed bottom-24 right-4 z-[80] sm:right-6"
-          initial={{ opacity: 0, scale: 0.5, y: 20 }}
+          className="fixed bottom-24 right-4 z-80 sm:right-6"
+          initial={reduceMotion ? false : { opacity: 0, scale: 0.5, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.5, y: 20 }}
           transition={{ type: "spring", stiffness: 300, damping: 22 }}
         >
-          <motion.button
+          <button
             type="button"
             aria-label="Back to top"
             onClick={scrollToTop}
-            className="group flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-[#0e0e0e]/90 text-white backdrop-blur-xl transition-all duration-300 hover:border-accent/40 hover:text-accent"
-            style={{
-              boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
-            }}
-            whileHover={reduceMotion ? undefined : { scale: 1.12, y: -2 }}
-            whileTap={reduceMotion ? undefined : { scale: 0.92 }}
+            className="nb-btn group h-12 w-12 bg-surface hover:bg-accent"
           >
             <svg
               width="18"
@@ -52,12 +47,12 @@ export function BackToTop() {
               <path
                 d="M12 19V5M5 12l7-7 7 7"
                 stroke="currentColor"
-                strokeWidth="2.2"
+                strokeWidth="2.8"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
             </svg>
-          </motion.button>
+          </button>
         </motion.div>
       )}
     </AnimatePresence>

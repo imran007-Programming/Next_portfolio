@@ -218,55 +218,41 @@ export function Terminal({
           audio.play().catch(() => {});
         }
       }}
-      className={`relative w-full overflow-hidden rounded-2xl border border-white/10 bg-[#08080c]/90 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.65)] cursor-pointer ${className}`}
+      className={`relative w-full cursor-pointer overflow-hidden rounded-xl border-[3px] border-ink bg-ink shadow-[8px_8px_0_0_#0a0a0a] ${className}`}
     >
       {/* Hidden audio element for typing sound */}
       <audio ref={audioRef} src="/sounds/sound.ogg" preload="auto" loop />
-      {/* Ambient Background Glow */}
-      <div className="absolute -top-16 -right-16 h-44 w-44 rounded-full blur-3xl pointer-events-none" style={{ background: "var(--accent-dim)" }} />
 
       {/* Header Bar */}
-      <div className="flex items-center justify-between border-b border-white/10 bg-white/[0.03] px-4 py-3 select-none">
-        <div className="flex items-center gap-2">
-          <span className="h-3 w-3 rounded-full bg-rose-500/80 inline-block" />
-          <span className="h-3 w-3 rounded-full bg-amber-500/80 inline-block" />
-          <span className="h-3 w-3 rounded-full bg-emerald-500/80 inline-block" />
-          <span className="ml-2 font-mono text-xs text-neutral-400 font-medium flex items-center gap-1.5">
-            <span style={{ color: "var(--accent)" }}>bash</span> ~ /imran-dev
+      <div className="flex select-none items-center justify-between gap-2 border-b-[3px] border-ink bg-accent px-3 py-2.5 text-ink">
+        <div className="flex items-center gap-1.5">
+          <span className="inline-block h-3.5 w-3.5 rounded-full border-2 border-ink bg-nb-red" />
+          <span className="inline-block h-3.5 w-3.5 rounded-full border-2 border-ink bg-surface" />
+          <span className="inline-block h-3.5 w-3.5 rounded-full border-2 border-ink bg-nb-green" />
+          <span className="ml-2 hidden font-mono text-xs font-bold sm:inline">
+            bash ~/imran-dev
           </span>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           <button
             onClick={() => setSoundEnabled((prev) => !prev)}
-            className={`rounded-md border px-2 py-1 text-[11px] font-mono transition-all ${
-              soundEnabled
-                ? "border-white/10"
-                : "bg-white/5 text-neutral-400 border-white/10"
+            className={`rounded-md border-2 border-ink px-2 py-0.5 font-mono text-[11px] font-bold transition-all active:translate-x-px active:translate-y-px ${
+              soundEnabled ? "bg-surface" : "bg-surface-2"
             }`}
-            style={soundEnabled ? {
-              background: "var(--accent-dim)",
-              color: "var(--accent)",
-              borderColor: "var(--accent)"
-            } : undefined}
             title={soundEnabled ? "Mute typing sound" : "Enable typing sound"}
           >
             {soundEnabled ? "🔊 Sound" : "🔇 Mute"}
           </button>
           <button
             onClick={handleReplay}
-            className="flex items-center gap-1 rounded-md border px-2.5 py-1 text-[11px] font-mono transition-all hover:opacity-80 active:scale-95"
-            style={{
-              borderColor: "var(--accent)",
-              background: "var(--accent-dim)",
-              color: "var(--accent)"
-            }}
+            className="rounded-md border-2 border-ink bg-ink px-2 py-0.5 font-mono text-[11px] font-bold text-white transition-all active:translate-x-px active:translate-y-px"
           >
             Replay ⚡
           </button>
           <button
             onClick={handleCopy}
-            className="rounded-md border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] font-mono text-neutral-400 transition-all hover:text-white hover:bg-white/10"
+            className="rounded-md border-2 border-ink bg-surface px-2 py-0.5 font-mono text-[11px] font-bold transition-all active:translate-x-px active:translate-y-px"
           >
             {copied ? "✓ Copied" : "Copy"}
           </button>

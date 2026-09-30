@@ -10,17 +10,17 @@ export function generateStaticParams() {
   return projects.map((p) => ({ slug: p.slug }));
 }
 
-const TECH_COLORS: Record<string, string> = {
-  "React": "#38bdf8", "Next.js": "#a3a3a3", "TypeScript": "#60a5fa",
-  "JavaScript": "#fbbf24", "Tailwind CSS": "#2dd4bf", "Vite": "var(--accent)",
-  "Framer Motion": "#f472b6", "Vercel": "#94a3b8", "CSS": "#818cf8",
-  "Audio API": "#34d399", "Node.js": "#86efac", "Express": "#c9d1d9",
-  "Prisma": "#a5b4fc", "PostgreSQL": "#93c5fd", "MongoDB": "#6ee7b7",
-  "Mongoose": "#fca5a5",
-};
-const FALLBACK = ["#fb923c", "#e879f9", "#4ade80", "#f87171", "#facc15"];
-function techColor(name: string, idx: number) {
-  return TECH_COLORS[name] ?? FALLBACK[idx % FALLBACK.length];
+const PILL_COLORS = ["var(--nb-yellow)", "var(--nb-pink)", "var(--nb-blue)", "var(--nb-green)", "var(--nb-orange)", "var(--nb-purple)"];
+const METRIC_COLORS = ["var(--nb-pink)", "var(--nb-blue)", "var(--nb-green)"];
+
+function SectionLabel({ children, extra }: { children: React.ReactNode; extra?: React.ReactNode }) {
+  return (
+    <div className="mb-6 flex items-center gap-3">
+      <p className="nb-tag bg-accent px-3 py-1 text-xs uppercase tracking-widest">{children}</p>
+      <span className="h-[3px] flex-1 bg-ink" />
+      {extra}
+    </div>
+  );
 }
 
 export default async function ProjectPage({
@@ -38,152 +38,109 @@ export default async function ProjectPage({
   const nextNum = String((index + 2) > projects.length ? 1 : index + 2).padStart(2, "0");
 
   return (
-    <div className="min-h-screen selection:bg-sky-500/30 selection:text-white" style={{ background: "#080808", color: "#f0f0f0" }}>
-
-      {/* ── Ambient purple background glow ── */}
-      <div
-        className="pointer-events-none fixed top-0 left-1/2 -translate-x-1/2 z-0 h-[500px] w-full max-w-7xl opacity-20 blur-3xl"
-        style={{
-          background: "radial-gradient(circle at top, var(--accent-dim) 0%, transparent 70%)",
-        }}
-        aria-hidden
-      />
+    <div className="min-h-screen text-ink">
 
       {/* ── Sticky Top Bar ── */}
-      <header
-        className="sticky top-0 z-50 flex items-center justify-between px-6 py-4 md:px-10"
-        style={{
-          background: "rgba(8,8,8,0.92)",
-          borderBottom: "1px solid rgba(255,255,255,0.08)",
-          backdropFilter: "blur(24px)",
-          WebkitBackdropFilter: "blur(24px)",
-        }}
-      >
-        <Link
-          href="/#projects"
-          className="group flex items-center gap-2 text-sm font-semibold transition-colors duration-200 hover:text-white"
-          style={{ color: "#a3a3a3" }}
-        >
+      <header className="sticky top-0 z-50 flex items-center justify-between border-b-[3px] border-ink bg-surface px-6 py-3 md:px-10">
+        <Link href="/#projects" className="nb-btn group bg-surface px-4 py-2 text-sm">
           <svg
             width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden
             className="transition-transform duration-200 group-hover:-translate-x-1"
           >
-            <path d="M19 12H5M5 12l7-7M5 12l7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M19 12H5M5 12l7-7M5 12l7 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
           Back to Work
         </Link>
 
         {/* Counter & Prev/Next */}
-        <div
-          className="flex items-center gap-1.5 rounded-full p-1.5"
-          style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}
-        >
+        <div className="flex items-center gap-2">
           <Link
             href={`/projects/${projects[(index - 1 + projects.length) % projects.length].slug}`}
             aria-label="Previous project"
-            className="flex h-8 w-8 items-center justify-center rounded-full transition-colors duration-200 hover:bg-white/10"
-            style={{ color: "#a3a3a3" }}
+            className="nb-btn h-9 w-9 bg-surface"
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden>
-              <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </Link>
-          <span className="px-2 font-mono text-xs font-bold tabular-nums" style={{ color: "var(--accent)" }}>
+          <span className="nb-tag bg-accent px-2.5 py-1 font-mono text-xs tabular-nums">
             {num} / {String(projects.length).padStart(2, "0")}
           </span>
           <Link
             href={`/projects/${projects[(index + 1) % projects.length].slug}`}
             aria-label="Next project"
-            className="flex h-8 w-8 items-center justify-center rounded-full transition-colors duration-200 hover:bg-white/10"
-            style={{ color: "#a3a3a3" }}
+            className="nb-btn h-9 w-9 bg-surface"
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden>
-              <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </Link>
         </div>
       </header>
 
-      <main className="relative z-10 mx-auto max-w-5xl px-6 pb-28 pt-10 md:px-10">
+      <main className="relative z-10 mx-auto max-w-5xl px-6 pb-28 pt-12 md:px-10">
 
         {/* ── Project Header Title ── */}
         <div className="mb-10">
           <div className="flex flex-wrap items-center gap-3">
-            <span className="font-mono text-sm font-bold tabular-nums" style={{ color: "var(--accent)" }}>
+            <span className="nb-tag -rotate-2 bg-ink px-3 py-1 font-mono text-sm text-white">
               Case Study #{num}
             </span>
             {project.details && (
               <>
-                <span className="h-3 w-px" style={{ background: "rgba(255,255,255,0.15)" }} />
-                <span
-                  className="rounded-full px-3 py-0.5 text-xs font-semibold"
-                  style={{ background: "var(--accent-dim)", border: "1px solid var(--accent)", color: "var(--accent)" }}
-                >
+                <span className="nb-tag bg-nb-pink px-3 py-1 text-xs">
                   {project.details.role}
                 </span>
-                <span
-                  className="rounded-full px-3 py-0.5 text-xs font-semibold"
-                  style={{ border: "1px solid rgba(255,255,255,0.1)", color: "#a3a3a3" }}
-                >
+                <span className="nb-tag bg-surface px-3 py-1 text-xs">
                   {project.details.year}
                 </span>
               </>
             )}
           </div>
 
-          <h1 className="mt-4 text-[clamp(2.5rem,6vw,4.5rem)] font-extrabold tracking-tight leading-[1.05]" style={{ color: "#f5f5f5" }}>
+          <h1 className="font-display mt-6 text-[clamp(2.4rem,6vw,4.6rem)] uppercase leading-[1.02]">
             {project.title}
           </h1>
 
-          <p className="mt-4 max-w-3xl text-base leading-relaxed md:text-lg" style={{ color: "#a3a3a3" }}>
+          <p className="mt-5 max-w-3xl text-base font-medium leading-relaxed text-muted md:text-lg">
             {project.description}
           </p>
         </div>
 
         {/* ── Hero Image / Preview Box ── */}
-        <div
-          className="overflow-hidden rounded-2xl shadow-2xl transition-all duration-500 hover:border-sky-500/30"
-          style={{ border: "1px solid rgba(255,255,255,0.1)", background: "rgba(17,17,17,0.7)" }}
-        >
+        <div className="nb-card overflow-hidden shadow-[8px_8px_0_0_#0a0a0a]">
           {project.scrollPreview ? (
             <HeroScroll src={project.image} alt={project.title} />
           ) : (
-            <div className="relative h-[55vh] w-full overflow-hidden">
+            <div className="relative h-[55vh] w-full overflow-hidden bg-surface-2">
               <Image
                 src={project.image}
                 alt={project.title}
                 fill
                 priority
-                className="object-cover object-top transition-transform duration-700 hover:scale-102"
+                className="object-cover object-top"
                 sizes="100vw"
-              />
-              <div
-                className="absolute inset-0"
-                style={{ background: "linear-gradient(to top, rgba(8,8,8,0.7) 0%, transparent 60%)" }}
               />
             </div>
           )}
         </div>
 
         {/* ── Actions & Tech Stack Row ── */}
-        <div className="mt-10 grid gap-8 md:grid-cols-[1fr_auto] md:items-center">
+        <div className="mt-12 grid gap-8 md:grid-cols-[1fr_auto] md:items-end">
           <div>
-            <p className="text-xs font-mono font-bold uppercase tracking-widest" style={{ color: "var(--accent)" }}>
+            <p className="mb-3 text-xs font-extrabold uppercase tracking-widest">
               Tech Stack &amp; Tools
             </p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {project.tech.map((t, ti) => {
-                const c = techColor(t, ti);
-                return (
-                  <span
-                    key={t}
-                    className="rounded-full px-3.5 py-1 text-xs font-bold transition-transform duration-200 hover:scale-105"
-                    style={{ background: `${c}18`, border: `1px solid ${c}35`, color: c }}
-                  >
-                    {t}
-                  </span>
-                );
-              })}
+            <div className="flex flex-wrap gap-2">
+              {project.tech.map((t, ti) => (
+                <span
+                  key={t}
+                  className="rounded-md border-2 border-ink px-3 py-1 text-xs font-bold shadow-[2px_2px_0_0_#0a0a0a]"
+                  style={{ background: PILL_COLORS[ti % PILL_COLORS.length] }}
+                >
+                  {t}
+                </span>
+              ))}
             </div>
           </div>
 
@@ -194,8 +151,7 @@ export default async function ProjectPage({
                 href={project.repoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all duration-300 hover:border-white/30 hover:text-white"
-                style={{ border: "1px solid rgba(255,255,255,0.12)", color: "#a3a3a3" }}
+                className="nb-btn bg-surface px-6 py-3 text-sm"
               >
                 <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current" aria-hidden>
                   <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.335-1.755-1.335-1.755-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23A11.52 11.52 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.29-1.552 3.297-1.23 3.297-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12z" />
@@ -208,17 +164,17 @@ export default async function ProjectPage({
 
         {/* ── Key Metrics Cards ── */}
         {project.metrics && project.metrics.length > 0 && (
-          <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-3">
-            {project.metrics.map((m) => (
+          <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-3">
+            {project.metrics.map((m, i) => (
               <div
                 key={m.label}
-                className="group rounded-2xl p-6 text-center transition-all duration-300 hover:border-sky-500/40 hover:-translate-y-1"
-                style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.08)" }}
+                className="nb-card nb-hover p-6 text-center"
+                style={{ background: METRIC_COLORS[i % METRIC_COLORS.length] }}
               >
-                <p className="text-3xl font-extrabold tabular-nums transition-colors group-hover:text-accent" style={{ color: "var(--accent)" }}>
+                <p className="font-display text-4xl tabular-nums">
                   {m.value}
                 </p>
-                <p className="mt-1.5 text-xs font-semibold uppercase tracking-wider" style={{ color: "#a3a3a3" }}>
+                <p className="mt-2 text-xs font-extrabold uppercase tracking-wider">
                   {m.label}
                 </p>
               </div>
@@ -229,30 +185,20 @@ export default async function ProjectPage({
         {/* ── Key Features Checklist ── */}
         {project.details?.highlights && (
           <div className="mt-16">
-            <div className="mb-6 flex items-center gap-3">
-              <span className="h-px w-8" style={{ background: "var(--accent)" }} />
-              <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--accent)" }}>
-                Key Features &amp; Engineering Highlights
-              </p>
-              <span className="h-px flex-1" style={{ background: "rgba(255,255,255,0.08)" }} />
-            </div>
+            <SectionLabel>Key Features &amp; Highlights</SectionLabel>
 
             <div className="grid gap-4 sm:grid-cols-2">
               {project.details.highlights.map((h, i) => (
                 <div
                   key={i}
-                  className="group flex items-start gap-3.5 rounded-2xl p-5 transition-all duration-300 hover:border-sky-500/30"
-                  style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.08)" }}
+                  className="flex items-start gap-3.5 rounded-xl border-[3px] border-ink bg-surface p-5 shadow-[4px_4px_0_0_#0a0a0a]"
                 >
-                  <span
-                    className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full transition-transform group-hover:scale-110"
-                    style={{ background: "var(--accent-dim)", border: "1px solid var(--accent)" }}
-                  >
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden>
-                      <path d="M20 6L9 17l-5-5" stroke="var(--accent)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                  <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md border-2 border-ink bg-nb-green">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden>
+                      <path d="M20 6L9 17l-5-5" stroke="#0a0a0a" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </span>
-                  <p className="text-sm leading-relaxed" style={{ color: "#d4d4d4" }}>{h}</p>
+                  <p className="text-sm font-medium leading-relaxed">{h}</p>
                 </div>
               ))}
             </div>
@@ -262,25 +208,21 @@ export default async function ProjectPage({
         {/* ── Gallery Screenshots ── */}
         {project.gallery && project.gallery.length > 0 && (
           <div className="mt-20">
-            <div className="mb-6 flex items-center gap-3">
-              <span className="h-px w-8" style={{ background: "var(--accent)" }} />
-              <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--accent)" }}>
-                Project Screenshots &amp; Gallery
-              </p>
-              <span className="h-px flex-1" style={{ background: "rgba(255,255,255,0.08)" }} />
-              <span className="text-xs font-mono" style={{ color: "#a3a3a3" }}>
-                {project.gallery.length} Images
-              </span>
-            </div>
+            <SectionLabel
+              extra={
+                <span className="nb-tag bg-surface px-2 py-0.5 font-mono text-xs">
+                  {project.gallery.length} Images
+                </span>
+              }
+            >
+              Screenshots &amp; Gallery
+            </SectionLabel>
             <GalleryGrid images={project.gallery} title={project.title} />
           </div>
         )}
 
-        {/* ── Bottom Section Divider ── */}
-        <div className="mt-20 h-px w-full" style={{ background: "rgba(255,255,255,0.08)" }} />
-
         {/* ── Next Project Card ── */}
-        <div className="mt-12">
+        <div className="mt-20">
           <NextProjectCard
             href={`/projects/${next.slug}`}
             num={nextNum}
