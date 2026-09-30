@@ -1,0 +1,56 @@
+name: Refresh project screenshots
+
+on:
+  # Checks every project site once a day. An image is only replaced (and a
+  # commit made) when the page looks noticeably different — see
+  # `changeThreshold` in scripts/screenshots.config.mjs.
+  schedule:
+    - cron: "17 3 * * *" # 03:17 UTC = 09:17 in Bangladesh
+  # Manual "Run workflow" button in the GitHub Actions tab
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Replace every screenshot, even if nothing changed"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-screenshots
+  cancel-in-progress: false
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Playwright + Chromium
+        run: |
+          npm install --prefix scripts --no-save --no-package-lock --no-audit --no-fund playwright-core@1
+          node scripts/node_modules/playwright-core/cli.js install --with-deps chromium
+
+      - name: Capture screenshots
+        id: capture
+        # schedule → respect intervalDays · manual → check now · manual + force → replace all
+        run: node scripts/capture-screenshots.mjs ${{ github.event_name == 'schedule' && '--if-due' || (inputs.force && '--force' || '') }}
+
+      - name: Commit and push changed screenshots
+        if: steps.capture.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public src/data/screenshots.json scripts/.screenshots-last-run
+          if git diff --cached --quiet; then
+            echo "Screenshots unchanged — nothing to commit."
+          else
+            git commit -m "chore: refresh project screenshots"
+            git push
+          fi
