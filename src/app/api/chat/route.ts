@@ -34,6 +34,11 @@ GitHub: https://github.com/imran007-Programming
    Live: https://percel-delievey-app.vercel.app/
    Features: Real-time shipment tracking, delivery status, Express REST API, MongoDB backend
 
+5. TradeSlot (2026) — Full Stack Developer
+   Tech: Next.js, React, TypeScript, Tailwind CSS, Node.js, Express, Prisma, PostgreSQL, Stripe Connect
+   Live: https://trade-slot.vercel.app/
+   Features: WhatsApp & web chat booking for tradespeople, 30-minute travel buffer scheduling, daily work-area zones, Stripe payments, trader dashboard
+
 === SKILLS ===
 Frontend: React, Next.js, TypeScript, JavaScript, Tailwind CSS, Framer Motion, Vite, HTML/CSS
 Backend: Node.js, Express.js, REST APIs, Prisma ORM

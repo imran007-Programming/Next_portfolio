@@ -125,9 +125,120 @@ async function openPage(page, url) {
   }
 }
 
-async function takeShot(browser, project, shot) {
+/** Run simple UI steps: click a button by its exact text, wait for a URL, or pause. */
+async function runSteps(page, steps = []) {
+  for (const step of steps) {
+    if (step.click) {
+      await page.getByText(step.click, { exact: true }).first().click({ timeout: 30_000 });
+    }
+    if (step.waitForURL) await page.waitForURL(step.waitForURL, { timeout: 60_000 });
+    if (step.wait) await page.waitForTimeout(step.wait);
+  }
+}
+
+/** Log in once for a project; the returned browser context keeps the session. */
+async function loginContext(browser, project) {
+  const context = await browser.newContext({ viewport: config.viewport });
+  const page = await context.newPage();
+  try {
+    await openPage(page, new URL(project.login.path ?? "/", project.url).toString());
+    await page.waitForTimeout(2000);
+    await runSteps(page, project.login.steps);
+  } finally {
+    await page.close();
+  }
+  return context;
+}
+
+/**
+ * Black out private details (phone numbers, chat text…) before capturing.
+ * `mask.text` is a regex matched against each element's own text;
+ * `mask.selectors` are CSS selectors to hide completely.
+ */
+async function maskLocators(page, mask) {
+  if (!mask) return [];
+  if (mask.text) {
+    await page.evaluate((source) => {
+      const re = new RegExp(source);
+      for (const el of document.querySelectorAll("body *")) {
+        const own = [...el.childNodes]
+          .filter((n) => n.nodeType === Node.TEXT_NODE)
+          .map((n) => n.textContent)
+          .join("")
+          .trim();
+        if (own && re.test(own)) el.setAttribute("data-shot-mask", "");
+      }
+    }, mask.text);
+  }
+  return ["[data-shot-mask]", ...(mask.selectors ?? [])].map((s) => page.locator(s));
+}
+
+/**
+ * Full-page capture for sites with scroll-driven/pinned sections, where a
+ * normal fullPage screenshot comes out mostly blank. Scrolls one screen at a
+ * time, captures each view, and joins them on a canvas — so the image shows
+ * what a visitor sees while scrolling. Fixed elements (e.g. the navbar) are
+ * hidden after the first screen so they don't repeat down the image.
+ */
+async function stitchedShot(context, page, mask) {
+  const vh = config.viewport.height;
+  const frames = [];
+  for (let top = 0; ; top += vh) {
+    const total = await page.evaluate(() => document.documentElement.scrollHeight);
+    const y = Math.min(top, total - vh);
+    await page.evaluate((v) => window.scrollTo(0, v), y);
+    await page.waitForTimeout(800);
+    if (frames.length === 1) {
+      await page.evaluate(() => {
+        for (const el of document.querySelectorAll("body *")) {
+          if (getComputedStyle(el).position === "fixed") el.style.visibility = "hidden";
+        }
+      });
+    }
+    await waitForImages(page, false);
+    const buf = await page.screenshot({
+      type: "jpeg",
+      quality: 90,
+      animations: "disabled",
+      mask: await maskLocators(page, mask),
+      maskColor: "#0a0a0a",
+    });
+    frames.push({ y, b64: buf.toString("base64") });
+    if (y + vh >= total) break;
+  }
+
+  // Join the frames in a blank page's canvas and export one JPEG
+  const canvasPage = await context.newPage();
+  try {
+    const dataUrl = await canvasPage.evaluate(
+      async ({ frames, width, height }) => {
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        for (const f of frames) {
+          const img = new Image();
+          img.src = `data:image/jpeg;base64,${f.b64}`;
+          await img.decode();
+          ctx.drawImage(img, 0, f.y);
+        }
+        return canvas.toDataURL("image/jpeg", 0.8);
+      },
+      {
+        frames,
+        width: config.viewport.width,
+        height: frames[frames.length - 1].y + vh,
+      },
+    );
+    return Buffer.from(dataUrl.split(",")[1], "base64");
+  } finally {
+    await canvasPage.close();
+  }
+}
+
+async function takeShot(context, project, shot) {
   const url = new URL(shot.path ?? "/", project.url).toString();
-  const page = await browser.newPage({ viewport: config.viewport });
+  const page = await context.newPage();
   try {
     await openPage(page, url);
     await page.waitForLoadState("networkidle", { timeout: 15_000 }).catch(() => {});
@@ -142,6 +253,7 @@ async function takeShot(browser, project, shot) {
     }
     await page.waitForTimeout(1500);
     await warmUp(page);
+    await runSteps(page, shot.steps);
 
     if (shot.scrollToText) {
       const el = await firstVisible(page, shot.scrollToText);
@@ -154,6 +266,8 @@ async function takeShot(browser, project, shot) {
       await page.waitForTimeout(1500);
     }
 
+    if (shot.stitch) return await stitchedShot(context, page, shot.mask);
+
     await waitForImages(page, !!shot.fullPage);
 
     // animations: "disabled" freezes CSS animations (marquees etc.) so repeat
@@ -163,6 +277,8 @@ async function takeShot(browser, project, shot) {
       quality: 80,
       fullPage: !!shot.fullPage,
       animations: "disabled",
+      mask: await maskLocators(page, shot.mask),
+      maskColor: "#0a0a0a",
     });
   } finally {
     await page.close();
@@ -244,12 +360,30 @@ async function main() {
 
   for (const project of config.projects) {
     if (only && project.slug !== only) continue;
+
+    // Public shots get a fresh context; shots marked `login: true` share one
+    // logged-in session (created lazily, only if such a shot exists).
+    const publicContext = await browser.newContext({ viewport: config.viewport });
+    let authContext = null;
+    let loginError = null;
+
     for (const shot of project.shots) {
       const url = toUrl(shot.file);
       const currentUrl = manifest[url] ?? url;
       const currentPath = publicPath(currentUrl);
       try {
-        const fresh = await takeShot(browser, project, shot);
+        let context = publicContext;
+        if (shot.login) {
+          if (!authContext && !loginError) {
+            authContext = await loginContext(browser, project).catch((err) => {
+              loginError = err;
+              return null;
+            });
+          }
+          if (loginError) throw new Error(`login failed (${loginError.message.split("\n")[0]})`);
+          context = authContext;
+        }
+        const fresh = await takeShot(context, project, shot);
         const old = await readFile(currentPath).catch(() => null);
         const threshold = shot.changeThreshold ?? config.changeThreshold;
 
@@ -289,9 +423,11 @@ async function main() {
         console.log(`✓ ${shot.file} — ${note}, updated → ${newUrl}`);
       } catch (err) {
         failed++;
-        console.warn(`✗ ${shot.file} — kept the old image (${err.message})`);
+        console.warn(`✗ ${shot.file} — kept the old image (${err.message.split("\n")[0]})`);
       }
     }
+    await publicContext.close();
+    await authContext?.close();
   }
   await browser.close();
 

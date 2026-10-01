@@ -36,6 +36,46 @@ const resolveImage = (src: string) => versioned[src] ?? src;
 
 const projectList: Project[] = [
   {
+    title: "TradeSlot",
+    slug: "tradeslot",
+    description:
+      "An on-demand booking, scheduling, and payment platform for tradespeople — electricians, plumbers, builders, and HVAC technicians. Customers book through WhatsApp or a live web chat widget, an intelligent scheduler adds a 30-minute travel buffer between jobs and only offers slots inside the trader's daily work-area zones, and payments are collected through Stripe Connect with automatic booking confirmation. Traders manage messages, bookings, customers, and work areas from a live-synced dashboard.",
+    tech: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Node.js", "Express", "Prisma", "PostgreSQL", "Stripe"],
+    image: "/tradeslot/tradeslot_main.jpg",
+    scrollPreview: true,
+    liveUrl: "https://trade-slot.vercel.app/",
+    repoUrl: "https://github.com/imran007-Programming/TradeSlot",
+    details: {
+      role: "Full Stack Developer",
+      year: "2026",
+      highlights: [
+        "Omnichannel booking intake through WhatsApp and a live web chat widget",
+        "30-minute travel buffer between jobs to prevent clashes and late arrivals",
+        "Daily work-area zones — slots are only offered where the trader works that day",
+        "Stripe Connect payments with one-click checkout links and auto-confirmation",
+        "Trader dashboard with live-synced messages, bookings, customers, and zones",
+        "Express 5 + Prisma + PostgreSQL backend with JWT cookie authentication",
+      ],
+    },
+    gallery: [
+      "/tradeslot/tradeslot_main.jpg",
+      "/tradeslot/tradeslot_services.jpg",
+      "/tradeslot/tradeslot_chat.jpg",
+      "/tradeslot/tradeslot_how_it_works.jpg",
+      "/tradeslot/tradeslot_buffer.jpg",
+      "/tradeslot/tradeslot_faq.jpg",
+      "/tradeslot/tradeslot_dashboard_messages.jpg",
+      "/tradeslot/tradeslot_dashboard_bookings.jpg",
+      "/tradeslot/tradeslot_dashboard_customers.jpg",
+      "/tradeslot/tradeslot_dashboard_workareas.jpg",
+    ],
+    metrics: [
+      { value: "30 min", label: "Travel Buffer" },
+      { value: "2", label: "Booking Channels" },
+      { value: "4", label: "Dashboard Modules" },
+    ],
+  },
+  {
     title: "TourGuide",
     slug: "tourguide",
     description:
@@ -148,11 +188,12 @@ const projectList: Project[] = [
     description:
       "A pixel-perfect, high-fidelity clone of Rise at Seven — a global SEO and content marketing agency. Recreates their polished brand experience with 15+ animated hero sections and page transitions powered by Framer Motion, editorial card layouts showcasing featured client work, service offering pages, international office locations, award listings, and a blog section. Fully responsive across all devices with custom typography, smooth 60fps animations, and a 99 Lighthouse performance score.",
     tech: ["Next.js", "React", "Framer Motion", "Tailwind CSS", "Node.js"],
-    image: "/rise/rise_main.jpg",
+    image: "/rise/rise_full.jpg",
+    scrollPreview: true,
     liveUrl: "https://rise-at-seven-olive.vercel.app/",
     repoUrl: "https://github.com/imran007-Programming/Rise_at_seven",
     gallery: [
-      "/rise/rise_main.jpg",
+      "/rise/rise_full.jpg",
       "/rise/rise_clients.jpg",
       "/rise/rise_featured_work.jpg",
       "/rise/rise_services.jpg",
