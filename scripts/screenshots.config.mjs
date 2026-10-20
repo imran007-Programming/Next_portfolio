@@ -45,7 +45,9 @@ const config = {
       shots: [
         // The API is slow to wake up — wait for real tour/guide cards so a
         // loading skeleton never replaces a good screenshot
-        { file: "public/tour/tour_main.jpg", path: "/", fullPage: true, waitForSelector: 'a[href^="/tours/"]' },
+        // Hero background rotates and tour/guide data changes — the bot updated this
+        // shot 5 times in Oct 2026 without a redesign, so it needs a higher bar
+        { file: "public/tour/tour_main.jpg", path: "/", fullPage: true, waitForSelector: 'a[href^="/tours/"]', changeThreshold: 0.35 },
         { file: "public/tour/tour_explore.jpg", path: "/explore", fullPage: true, waitForSelector: 'a[href^="/tours/"]' },
         { file: "public/tour/tour_guides.jpg", path: "/guides", fullPage: true, waitForSelector: 'a[href^="/guides/"]' },
       ],
@@ -72,13 +74,40 @@ const config = {
       url: "https://rise-at-seven-olive.vercel.app",
       shots: [
         // Featured Work is a pinned, scroll-driven section — stitch instead of fullPage
-        { file: "public/rise/rise_full.jpg", path: "/", stitch: true },
+        // Scroll-driven animations land slightly differently on every run
+        { file: "public/rise/rise_full.jpg", path: "/", stitch: true, changeThreshold: 0.35 },
         { file: "public/rise/rise_clients.jpg", path: "/", scrollToText: "THE AGENCY BEHIND", offset: 65 },
         { file: "public/rise/rise_featured_work.jpg", path: "/", scrollToText: "FEATURED WORK", offset: 90 },
         { file: "public/rise/rise_services.jpg", path: "/", scrollToText: "View all Services", offset: 110 },
         { file: "public/rise/rise_pioneers.jpg", path: "/", scrollToText: "Legacy In The Making", offset: 110 },
         { file: "public/rise/rise_whats_new.jpg", path: "/", scrollToText: "Explore More Thoughts", offset: 115 },
         { file: "public/rise/rise_footer.jpg", path: "/", scrollTo: "bottom" },
+      ],
+    },
+    {
+      slug: "agromate",
+      url: "https://agromate-one.vercel.app",
+      // The login page has a public "Farmer demo" button, so no password is stored here
+      login: {
+        path: "/en/login",
+        steps: [{ click: "Farmer demo" }, { waitForURL: "**/dashboard**" }],
+      },
+      shots: [
+        { file: "public/agromate/agromate_main.jpg", path: "/en", fullPage: true },
+        { file: "public/agromate/agromate_bangla.jpg", path: "/bn" },
+        { file: "public/agromate/agromate_experts.jpg", path: "/en/experts" },
+        { file: "public/agromate/agromate_about.jpg", path: "/en/about" },
+        { file: "public/agromate/agromate_login.jpg", path: "/en/login" },
+
+        // Farmer dashboard (demo account). The API sleeps on Render's free tier,
+        // so each page waits for its real content before capturing.
+        { file: "public/agromate/agromate_dashboard.jpg", path: "/en/dashboard", login: true, waitForSelector: "text=Total income" },
+        { file: "public/agromate/agromate_market.jpg", path: "/en/dashboard/market", login: true },
+        { file: "public/agromate/agromate_analytics.jpg", path: "/en/dashboard/analytics", login: true },
+        { file: "public/agromate/agromate_diagnose.jpg", path: "/en/dashboard/diagnose", login: true },
+        { file: "public/agromate/agromate_assistant.jpg", path: "/en/dashboard/assistant", login: true },
+        { file: "public/agromate/agromate_crop_guide.jpg", path: "/en/dashboard/crops", login: true, waitForSelector: "text=Rice (Boro)" },
+        { file: "public/agromate/agromate_advice.jpg", path: "/en/dashboard/advice", login: true, waitForSelector: "text=Good to plant now" },
       ],
     },
     {

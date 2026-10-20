@@ -104,6 +104,26 @@ async function waitForImages(page, fullPage) {
     .catch(() => {}); // a broken image shouldn't block the whole capture
 }
 
+/** Pause every video on its first frame so background videos don't add noise. */
+async function freezeVideos(page) {
+  await page
+    .evaluate(() =>
+      Promise.all(
+        [...document.querySelectorAll("video")].map(
+          (v) =>
+            new Promise((resolve) => {
+              v.pause();
+              if (v.readyState === 0 || v.currentTime === 0) return resolve();
+              v.addEventListener("seeked", resolve, { once: true });
+              v.currentTime = 0;
+              setTimeout(resolve, 3000);
+            }),
+        ),
+      ),
+    )
+    .catch(() => {});
+}
+
 async function firstVisible(page, text) {
   for (const el of await page.getByText(text).all()) {
     if (await el.isVisible()) return el;
@@ -266,6 +286,7 @@ async function takeShot(context, project, shot) {
       await page.waitForTimeout(1500);
     }
 
+    await freezeVideos(page);
     if (shot.stitch) return await stitchedShot(context, page, shot.mask);
 
     await waitForImages(page, !!shot.fullPage);

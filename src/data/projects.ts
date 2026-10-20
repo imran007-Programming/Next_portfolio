@@ -36,6 +36,48 @@ const resolveImage = (src: string) => versioned[src] ?? src;
 
 const projectList: Project[] = [
   {
+    title: "AgroMate",
+    slug: "agromate",
+    description:
+      "A bilingual (English & বাংলা) smart-farming platform for farmers in Bangladesh. It brings live crop and fertilizer prices from TCB, local weather forecasts, crop guides, and season-aware planting and fertilizer advice into one place. Farmers track their fields on a map, keep crop records and an account book with income-vs-cost analytics, check plant diseases from a photo with AI, ask an AI assistant in Bangla or English, and chat in real time with verified agricultural experts.",
+    tech: ["Next.js", "React", "TypeScript", "Tailwind CSS", "next-intl", "MapLibre", "Socket.IO", "Express", "Prisma", "PostgreSQL"],
+    image: "/agromate/agromate_main.jpg",
+    scrollPreview: true,
+    liveUrl: "https://agromate-one.vercel.app/",
+    repoUrl: "https://github.com/imran007-Programming/Agromate",
+    details: {
+      role: "Full Stack Developer",
+      year: "2026",
+      highlights: [
+        "Fully bilingual UI in English and বাংলা with next-intl",
+        "Live market prices (TCB) and local weather forecasts on the home page and dashboard",
+        "Field mapping with MapLibre, crop records and an income-vs-cost account book",
+        "AI crop-disease check from a photo, plus an AI farming assistant",
+        "Real-time farmer-to-expert messaging with Socket.IO and verified expert profiles",
+        "Express 5 + Prisma + PostgreSQL API with Better Auth and Cloudinary uploads",
+      ],
+    },
+    gallery: [
+      "/agromate/agromate_main.jpg",
+      "/agromate/agromate_bangla.jpg",
+      "/agromate/agromate_dashboard.jpg",
+      "/agromate/agromate_market.jpg",
+      "/agromate/agromate_analytics.jpg",
+      "/agromate/agromate_diagnose.jpg",
+      "/agromate/agromate_assistant.jpg",
+      "/agromate/agromate_advice.jpg",
+      "/agromate/agromate_crop_guide.jpg",
+      "/agromate/agromate_experts.jpg",
+      "/agromate/agromate_about.jpg",
+      "/agromate/agromate_login.jpg",
+    ],
+    metrics: [
+      { value: "2", label: "Languages" },
+      { value: "15", label: "Farmer Tools" },
+      { value: "Live", label: "Prices & Weather" },
+    ],
+  },
+  {
     title: "TradeSlot",
     slug: "tradeslot",
     description:

@@ -34,7 +34,12 @@ GitHub: https://github.com/imran007-Programming
    Live: https://percel-delievey-app.vercel.app/
    Features: Real-time shipment tracking, delivery status, Express REST API, MongoDB backend
 
-5. TradeSlot (2026) — Full Stack Developer
+5. AgroMate (2026) — Full Stack Developer
+   Tech: Next.js, React, TypeScript, Tailwind CSS, next-intl, MapLibre, Socket.IO, Express, Prisma, PostgreSQL
+   Live: https://agromate-one.vercel.app/
+   Features: Bilingual (English/Bangla) smart-farming platform — live market prices and weather, field mapping, crop records and account book, AI disease check and assistant, real-time chat with agricultural experts
+
+6. TradeSlot (2026) — Full Stack Developer
    Tech: Next.js, React, TypeScript, Tailwind CSS, Node.js, Express, Prisma, PostgreSQL, Stripe Connect
    Live: https://trade-slot.vercel.app/
    Features: WhatsApp & web chat booking for tradespeople, 30-minute travel buffer scheduling, daily work-area zones, Stripe payments, trader dashboard
