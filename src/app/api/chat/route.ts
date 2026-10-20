@@ -1,5 +1,49 @@
-import Groq from "groq-sdk";
 import { sendChatbotEmail } from "@/lib/mail";
+
+// Google Gemini via its REST API. Flash-Lite is fast and cheap enough for a
+// portfolio chatbot; override with GEMINI_MODEL (e.g. "gemini-3.8-flash").
+const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-3.5-flash-lite";
+const GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
+
+type ChatMessage = { role: "user" | "assistant"; content: string };
+type GeminiContent = { role: "user" | "model"; parts: { text: string }[] };
+type GeminiResponse = {
+  candidates?: { content?: { parts?: { text?: string; thought?: boolean }[] } }[];
+};
+
+/**
+ * Convert the chat history to Gemini's format: assistant → "model", drop the
+ * greeting that comes before the first user message, and merge consecutive
+ * turns from the same side (Gemini expects user/model to alternate).
+ */
+function toGeminiContents(messages: ChatMessage[]): GeminiContent[] {
+  const contents: GeminiContent[] = [];
+  for (const m of messages) {
+    const role = m.role === "assistant" ? "model" : "user";
+    if (!contents.length && role === "model") continue;
+    const last = contents[contents.length - 1];
+    if (last?.role === role) last.parts[0].text += `\n\n${m.content}`;
+    else contents.push({ role, parts: [{ text: m.content }] });
+  }
+  return contents;
+}
+
+/** The answer text of a Gemini response, skipping any thought parts. */
+function responseText(data: GeminiResponse): string {
+  return (data.candidates?.[0]?.content?.parts ?? [])
+    .filter((p) => !p.thought)
+    .map((p) => p.text ?? "")
+    .join("");
+}
+
+function gemini(apiKey: string, method: "generateContent" | "streamGenerateContent", body: object) {
+  const query = method === "streamGenerateContent" ? "?alt=sse" : "";
+  return fetch(`${GEMINI_BASE}/${GEMINI_MODEL}:${method}${query}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
+    body: JSON.stringify(body),
+  });
+}
 
 const SYSTEM = `You are the portfolio assistant for Imran Hasan, a Full Stack Developer. Answer visitor questions about Imran's work, skills, projects, and availability. Be friendly, concise (2-4 sentences unless more detail is asked for), and professional.
 
@@ -57,42 +101,42 @@ Tools: Git, GitHub, Vercel, Figma
 - Use plain text only — no markdown, no bullet symbols, just clean sentences.`;
 
 const CLASSIFY_SYSTEM = `You are a strict classifier. A user asked a question to a portfolio chatbot.
-The chatbot only knows: Imran Hasan's 5 projects, his tech skills, contact details (email/WhatsApp/LinkedIn/GitHub), and that he is open to work.
+The chatbot only knows: Imran Hasan's projects, his tech skills, contact details (email/WhatsApp/LinkedIn/GitHub), and that he is open to work.
 Reply with exactly one word — YES if the question can be answered from that info, NO if it cannot.
 Do not write anything else.`;
 
 export async function POST(req: Request) {
-  const apiKey = process.env.GROQ_API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    console.error("GROQ_API_KEY is not set");
+    console.error("GEMINI_API_KEY is not set");
     return Response.json({ error: "API key not configured" }, { status: 500 });
   }
 
   try {
-    const { messages } = (await req.json()) as {
-      messages: Array<{ role: "user" | "assistant"; content: string }>;
-    };
+    const { messages } = (await req.json()) as { messages: ChatMessage[] };
 
     const lastQuestion =
       [...messages].reverse().find((m) => m.role === "user")?.content ?? "";
 
-    const groq    = new Groq({ apiKey });
     const encoder = new TextEncoder();
 
-    // ── Step 1: Classify (fast, non-streaming, max 3 tokens) ──────
-    const classify = await groq.chat.completions.create({
-      model: "llama-3.1-8b-instant",
-      max_tokens: 3,
-      temperature: 0,
-      messages: [
-        { role: "system", content: CLASSIFY_SYSTEM },
-        { role: "user",   content: lastQuestion },
-      ],
-      stream: false,
-    });
-
-    const verdict = classify.choices[0]?.message?.content?.trim().toUpperCase() ?? "";
-    const canAnswer = verdict.startsWith("YES");
+    // ── Step 1: Classify (fast, non-streaming) ────────────────────
+    // A few spare tokens in case the model thinks briefly before answering.
+    // If classification itself fails, assume the bot can answer rather than
+    // emailing Imran about every question.
+    let canAnswer = true;
+    try {
+      const res = await gemini(apiKey, "generateContent", {
+        systemInstruction: { parts: [{ text: CLASSIFY_SYSTEM }] },
+        contents: [{ role: "user", parts: [{ text: lastQuestion }] }],
+        generationConfig: { temperature: 0, maxOutputTokens: 32 },
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+      const verdict = responseText((await res.json()) as GeminiResponse).trim().toUpperCase();
+      if (verdict) canAnswer = verdict.startsWith("YES");
+    } catch (err) {
+      console.error("Gemini classify error:", err instanceof Error ? err.message : err);
+    }
 
     // ── Step 2: Await email before streaming (ensures Vercel doesn't cut it off) ──
     if (!canAnswer) {
@@ -112,21 +156,35 @@ export async function POST(req: Request) {
     const readable = new ReadableStream({
       async start(controller) {
         try {
-          const stream = await groq.chat.completions.create({
-            model: "llama-3.1-8b-instant",
-            max_tokens: 512,
-            messages: [{ role: "system", content: SYSTEM }, ...messages],
-            stream: true,
+          const res = await gemini(apiKey, "streamGenerateContent", {
+            systemInstruction: { parts: [{ text: SYSTEM }] },
+            contents: toGeminiContents(messages),
+            generationConfig: { maxOutputTokens: 1024 },
           });
+          if (!res.ok || !res.body) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
 
-          for await (const chunk of stream) {
-            const text = chunk.choices[0]?.delta?.content ?? "";
+          // Server-sent events: each "data: {...}" line is one response chunk
+          const reader = res.body.getReader();
+          const decoder = new TextDecoder();
+          const emit = (line: string) => {
+            if (!line.startsWith("data:")) return;
+            const text = responseText(JSON.parse(line.slice(5)) as GeminiResponse);
             if (text) controller.enqueue(encoder.encode(text));
+          };
+          let buffer = "";
+          while (true) {
+            const { value, done } = await reader.read();
+            if (done) break;
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split("\n");
+            buffer = lines.pop() ?? "";
+            lines.forEach(emit);
           }
+          emit(buffer.trim());
         } catch (err) {
           const msg = err instanceof Error ? err.message : String(err);
-          console.error("Groq stream error:", msg);
-          controller.enqueue(encoder.encode(`[Error: ${msg}]`));
+          console.error("Gemini stream error:", msg);
+          controller.enqueue(encoder.encode("Sorry, I couldn't answer that right now. Please try again in a moment."));
         } finally {
           controller.close();
         }

@@ -205,7 +205,7 @@ export function ChatBot() {
                   </svg>
                 </button>
               </div>
-              <p className="mt-1.5 text-center text-[9px] font-semibold text-muted">Powered by Groq · Llama 3.1</p>
+              <p className="mt-1.5 text-center text-[9px] font-semibold text-muted">Powered by Google Gemini</p>
             </form>
           </motion.div>
         )}
